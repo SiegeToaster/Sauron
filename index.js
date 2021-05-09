@@ -23,7 +23,7 @@ client.on('message', message => {
 
 	// =====DEBUG=====\\
 	// console.log(`args: ${args}`);
-	// console.log(`command: ${command}`);
+	console.log(`command: ${command}`);
 	// console.log(`guild: ${guild}`);
     switch (command) {
 	case 'ping':
