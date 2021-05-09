@@ -6,7 +6,7 @@ const client = new Discord.Client();
 
 client.once('ready', () => {
     // client.user.setActivity('Bots', { type: 'WATCHING' });
-    console.log('Ready!');
+    console.log('Sauron is now online.');
 });
 
 const { prefix } = require('./config.json');
