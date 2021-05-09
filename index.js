@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 /* eslint-disable brace-style */
 /* eslint-disable indent */
 // =====SETUP=====\\
@@ -13,7 +14,6 @@ const { prefix } = require('./config.json');
 const { token } = require('./private.json');
 client.login(token);
 
-
 // =====ACTIONS=====\\
 client.on('message', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -23,6 +23,8 @@ client.on('message', message => {
 
 	// =====DEBUG=====\\
 	// console.log(`args: ${args}`);
+    // console.log(`1st element of args: ${args[0]}`);
+    // console.log(`args size: ${args.length}`);
 	console.log(`command: ${command}`);
 	// console.log(`guild: ${guild}`);
     switch (command) {
@@ -38,23 +40,77 @@ client.on('message', message => {
 			return message.channel.send('No one is abcent <:FeelsOkayMan:785613008247193660>');
 		} else {
             console.log(guild.members);
-            /* const guilds = bot.guilds.array();
-
-            for (let i = 0; i < guilds.length; i++) {
-                bot.guilds.get(guilds[i].id).fetchMembers().then(r => {
-                    r.members.array().forEach(r => {
-                        const username = `${r.user.username}#${r.user.discriminator}`;
-                        console.log(`${username}`);
-                    });
-                });
-            }
-            console.log(`${guilds}`);
-*/
         }
-
         break;
-    case 'idk':
-        // ...
+    case 'troll':
+        let waitTime = 0;
+        message.delete();
+        if (args.length < 1) {
+            return message.channel.send('No one to troll <:FeelsBadMan:794744572718481408>');
+        } else {
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            waitTime++;
+            waitTime++;
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+            setTimeout(() => {message.channel.send(args[0]); }, waitTime * 1000);
+        }
         break;
 	}
 });
