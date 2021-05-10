@@ -6,7 +6,6 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 
 client.once('ready', () => {
-    // client.user.setActivity('Bots', { type: 'WATCHING' });
     console.log('Sauron is now online.');
 });
 
@@ -23,10 +22,11 @@ client.on('message', message => {
 
 	// =====DEBUG=====\\
 	// console.log(`args: ${args}`);
-    // console.log(`1st element of args: ${args[0]}`);
+    console.log(`1st element of args: ${args[0]}`);
     // console.log(`args size: ${args.length}`);
 	console.log(`command: ${command}`);
 	// console.log(`guild: ${guild}`);
+    console.log(' ');
     switch (command) {
 	case 'ping':
         message.channel.send('Pong.');
@@ -43,78 +43,24 @@ client.on('message', message => {
         }
         break;
     case 'troll':
-        let waitTime = 0;
         message.delete();
         if (args.length < 1) {
             return message.channel.send('No one to troll <:FeelsBadMan:794744572718481408>');
         } else {
             let fullMessage = '';
-            for (let i = 0; i < args.length; i++) {
+                for (let i = 0; i < args.length; i++) {
+                if(args[i].includes('<@!306589457908498433>')) {
+                    args[i] = 'Sheeshus Sheeshius';
+                }
                 fullMessage = fullMessage + args[i] + ' ';
             }
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            waitTime++;
-            waitTime++;
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
-            setTimeout(() => {message.channel.send(fullMessage); }, waitTime * 1000);
+            for (let i = 0; i < 25; i++) {
+                message.channel.send(fullMessage);
+            }
         }
         break;
+        case 'test':
+            message.channel.send('no tests today <:pepePOG:796983161249988648>');
+            break;
 	}
 });
