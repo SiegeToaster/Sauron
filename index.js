@@ -68,7 +68,7 @@ client.on('message', message => {
         break;
 
     case 'jamtime':
-            message.channel.send('@ everyone jam time?  <:FeelsOkayMan:785613008247193660>').then(sent => {
+            message.channel.send('@everyone jam time?  <:FeelsOkayMan:785613008247193660>').then(sent => {
                 sent.react('✅')
                     .then(() => {
                         sent.react('❌');
