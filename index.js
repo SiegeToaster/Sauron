@@ -24,9 +24,10 @@ client.on('message', message => {
 	// console.log(`args: ${args}`);
     // console.log(`1st element of args: ${args[0]}`);
     // console.log(`args size: ${args.length}`);
-	console.log(`command: ${command}`);
+	// console.log(`command: ${command}`);
 	// console.log(`guild: ${guild}`);
     console.log(' ');
+    console.log(`input: ${command} ${args}`)
     switch (command) {
 	case 'ping':
         message.channel.send('Pong.');
@@ -35,6 +36,10 @@ client.on('message', message => {
 	case 'catjam':
         message.delete();
         message.channel.send('https://tenor.com/view/cat-cat-jam-nod-pet-kitty-gif-17932554');
+        break;
+
+    case 'joe':
+        message.channel.send('joe mama');
         break;
 
 	case 'absent':
@@ -61,6 +66,23 @@ client.on('message', message => {
                 message.channel.send(fullMessage);
             }
         }
+        break;
+
+    case 'gamble':
+        message.channel.send('I am thinking of a number between 1 and 10.  What is the number?');
+        let gambleNumber = Math.round(Math.random() * 10);
+        client.once('message', guessMessage => {
+            let guess = Math.round(parseInt(guessMessage.content));
+            console.log(gambleNumber);
+            console.log(guess);
+            console.log(guess > 1 && guess < 11)
+            console.log(guess === gambleNumber);
+            if (guess > 1 && guess < 11) {
+                if (guess === gambleNumber) {
+                    message.channel.send('Correct! <:HYPERS:794746882760769618>');
+                }
+            }
+        });
         break;
 
     case 'test':

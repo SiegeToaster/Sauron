@@ -7,6 +7,10 @@ crappy Discord bot
     - messages back 'pong'.
 - [x] catjam
     - sends a catjam gif.
+- [x] joe
+    - messages back 'mama'.
+- [ ] gamble
+    - randomly picks a number between 1 and 10 and asks user to guess.  Then, says correct if it is correcet.
 - [ ] absent
     - lists everyone that is offline.
 - [x] troll (anything)
