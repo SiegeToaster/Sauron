@@ -22,7 +22,7 @@ client.on('message', message => {
 
 	// =====DEBUG=====\\
 	// console.log(`args: ${args}`);
-    console.log(`1st element of args: ${args[0]}`);
+    // console.log(`1st element of args: ${args[0]}`);
     // console.log(`args size: ${args.length}`);
 	console.log(`command: ${command}`);
 	// console.log(`guild: ${guild}`);
@@ -69,9 +69,23 @@ client.on('message', message => {
 
     case 'jamtime':
             message.channel.send('@ everyone jam time?  <:FeelsOkayMan:785613008247193660>').then(sent => {
-                console.log (sent);
                 sent.react('✅')
-                    .then(() => sent.react('❌'));
+                    .then(() => {
+                        sent.react('❌');
+                        const filter = (reaction, user) => {
+                            return reaction.emoji.name === '❌' && user.id === user.id;
+                        };
+                        const collector = sent.createReactionCollector((filter));
+                        collector.on('collect', (reaction, user) => {
+                            if (!(user.id === '840287143204880444')) {
+                                if (user.id === '306589457908498433') {
+                                    message.channel.send('Sheeshus Sheeshius');
+                                } else {
+                                    message.channel.send(`<@!${user.id}> doesn't want to jam time <:Sadge:804521949794795601>`);
+                                }
+                            }
+                        });
+                    });
             });
             break;
 	}
