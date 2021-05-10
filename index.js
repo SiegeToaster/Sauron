@@ -72,16 +72,29 @@ client.on('message', message => {
                 sent.react('✅')
                     .then(() => {
                         sent.react('❌');
-                        const filter = (reaction, user) => {
+                        const filterX = (reaction, user) => {
                             return reaction.emoji.name === '❌' && user.id === user.id;
                         };
-                        const collector = sent.createReactionCollector((filter));
-                        collector.on('collect', (reaction, user) => {
+                        const collectorX = sent.createReactionCollector(filterX);
+                        collectorX.on('collect', (reaction, user) => {
                             if (!(user.id === '840287143204880444')) {
                                 if (user.id === '306589457908498433') {
-                                    message.channel.send('Sheeshus Sheeshius');
+                                    message.channel.send("Sheeshus Sheeshius absent jammer <:Sadge:804521949794795601>");
                                 } else {
-                                    message.channel.send(`<@!${user.id}> doesn't want to jam time <:Sadge:804521949794795601>`);
+                                    message.channel.send(`<@!${user.id}> absent jammer <:Sadge:804521949794795601>`);
+                                }
+                            }
+                        });
+                        const filterY = (reaction, user) => {
+                            return reaction.emoji.name === '✅' && user.id === user.id;
+                        };
+                        const collectorY = sent.createReactionCollector(filterY);
+                        collectorY.on('collect', (reaction, user) => {
+                            if (!(user.id === '840287143204880444')) {
+                                if (user.id === '306589457908498433') {
+                                    message.channel.send("Sheeshus Sheeshius presnt jammer <:FeelsOkayMan:785613008247193660>");
+                                } else {
+                                    message.channel.send(`<@!${user.id}> present jammer <:FeelsOkayMan:785613008247193660>`);
                                 }
                             }
                         });
