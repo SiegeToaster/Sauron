@@ -31,10 +31,12 @@ client.on('message', message => {
 	case 'ping':
         message.channel.send('Pong.');
         break;
+
 	case 'catjam':
         message.delete();
         message.channel.send('https://tenor.com/view/cat-cat-jam-nod-pet-kitty-gif-17932554');
         break;
+
 	case 'absent':
 		if (!message.mentions.users.size) {
 			return message.channel.send('No one is abcent <:FeelsOkayMan:785613008247193660>');
@@ -42,6 +44,7 @@ client.on('message', message => {
             console.log(guild.members);
         }
         break;
+
     case 'troll':
         message.delete();
         if (args.length < 1) {
@@ -59,8 +62,17 @@ client.on('message', message => {
             }
         }
         break;
-        case 'test':
+
+    case 'test':
             message.channel.send('no tests today <:pepePOG:796983161249988648>');
+        break;
+
+    case 'jamtime':
+            message.channel.send('@ everyone jam time?  <:FeelsOkayMan:785613008247193660>').then(sent => {
+                console.log (sent);
+                sent.react('✅')
+                    .then(() => sent.react('❌'));
+            });
             break;
 	}
 });
