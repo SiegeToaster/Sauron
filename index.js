@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable no-case-declarations */
 /* eslint-disable brace-style */
 /* eslint-disable indent */
@@ -27,7 +28,7 @@ client.on('message', message => {
 	// console.log(`command: ${command}`);
 	// console.log(`guild: ${guild}`);
     console.log(' ');
-    console.log(`input: ${command} ${args}`)
+    console.log(`input: ${command} ${args}`);
     switch (command) {
 	case 'ping':
         message.channel.send('Pong.');
@@ -70,12 +71,12 @@ client.on('message', message => {
 
     case 'gamble':
         message.channel.send('I am thinking of a number between 1 and 10.  What is the number?');
-        let gambleNumber = Math.round(Math.random() * 10);
+        const gambleNumber = Math.round(Math.random() * 10);
         client.once('message', guessMessage => {
-            let guess = Math.round(parseInt(guessMessage.content));
+            const guess = Math.round(parseInt(guessMessage.content));
             console.log(gambleNumber);
             console.log(guess);
-            console.log(guess > 1 && guess < 11)
+            console.log(guess > 1 && guess < 11);
             console.log(guess === gambleNumber);
             if (guess > 1 && guess < 11) {
                 if (guess === gambleNumber) {
