@@ -5,10 +5,14 @@ crappy Discord bot
 *An x indicates that the feature is complte*
 - [x] ping
     - messages back 'pong'.
+- [x] help
+    - messages back an embed of all available commands
 - [x] catjam
     - sends a catjam gif.
 - [x] joe
-    - messages back 'mama'.
+    - messages back 'joe mama'.
+- [x] ligma
+    - messages back 'ligma balls'.
 - [ ] gamble
     - randomly picks a number between 1 and 10 and asks user to guess.  Then, says correct if it is correcet.
 - [ ] absent

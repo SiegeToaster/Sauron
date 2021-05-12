@@ -12,6 +12,24 @@ client.once('ready', () => {
 
 const { prefix } = require('./config.json');
 const { token } = require('./private.json');
+const helpEmbed = new Discord.MessageEmbed()
+    .setColor('#0099ff')
+    .setTitle('Help')
+    .setAuthor('Sauron', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
+    .setDescription('A list of commands for the Sauron bot.')
+    .addFields(
+        { name: '\u200B', value: '\u200B' },
+        { name: 'Prefix', value: 'Use this character at the beginning of any message that is a command\n?' },
+        { name: 'Ping', value: "Sends 'pong' instantly.  Used to test bot's connection or if the bot is online." },
+        { name: 'Help', value: 'Sends this embed.' },
+        { name: 'Catjam', value: 'Sends a gif of a cat jamming.' },
+        { name: 'Joe', value: 'mama' },
+        { name: 'Ligma', value: 'balls' },
+        { name: 'Troll', value: 'Sends the message declared after the command 25 times.' },
+        { name: 'Jamtime', value: 'Pings everyone asking for jamtime and adds yes/no reactions.\n\nIf someone reacts yes, they get present jammer <:FeelsOkayMan:785613008247193660>.\nIf someone reacts no, they get absent jammer <:Sadge:804521949794795601>.' },
+    )
+    .setFooter('ligma');
+
 client.login(token);
 
 // =====ACTIONS=====\\
@@ -34,6 +52,10 @@ client.on('message', message => {
         message.channel.send('Pong.');
         break;
 
+    case 'help':
+        message.channel.send(helpEmbed);
+        break;
+
 	case 'catjam':
         message.delete();
         message.channel.send('https://tenor.com/view/cat-cat-jam-nod-pet-kitty-gif-17932554');
@@ -41,6 +63,10 @@ client.on('message', message => {
 
     case 'joe':
         message.channel.send('joe mama');
+        break;
+
+    case 'ligma':
+        message.channel.send('ligma balls');
         break;
 
 	case 'absent':
