@@ -26,6 +26,7 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Joe', value: 'mama' },
         { name: 'Ligma', value: 'balls' },
         { name: 'Troll', value: 'Sends the message declared after the command 25 times.' },
+        { name: 'Gamble', value: 'Guessing game for numbers between 1 and 10.' },
         { name: 'Jamtime', value: 'Pings everyone asking for jamtime and adds yes/no reactions.\n\nIf someone reacts yes, they get present jammer <:FeelsOkayMan:785613008247193660>.\nIf someone reacts no, they get absent jammer <:Sadge:804521949794795601>.' },
     )
     .setFooter('ligma');
@@ -45,6 +46,8 @@ client.on('message', message => {
     // console.log(`args size: ${args.length}`);
 	// console.log(`command: ${command}`);
 	// console.log(`guild: ${guild}`);
+    const tempVar = message.guild.members.fetch(message.author.id);
+    console.log(tempVar.nickname);
     console.log(' ');
     console.log(`input: ${command} ${args}`);
     switch (command) {
@@ -85,7 +88,7 @@ client.on('message', message => {
             let fullMessage = '';
                 for (let i = 0; i < args.length; i++) {
                 if(args[i].includes('<@!306589457908498433>')) {
-                    args[i] = 'Sheeshus Sheeshius';
+                    args[i] = (message.guild.members.cache.get('306589457908498433')).nickname;
                 }
                 fullMessage = fullMessage + args[i] + ' ';
             }
@@ -96,24 +99,20 @@ client.on('message', message => {
         break;
 
     case 'gamble':
-        message.channel.send('I am thinking of a number between 1 and 10.  What is the number?');
+        message.channel.send('I am thinking of a number between 1 and 10.  What is the number?').then(sent => {
         const gambleNumber = Math.round(Math.random() * 10);
-        client.once('message', guessMessage => {
-            const guess = Math.round(parseInt(guessMessage.content));
-            console.log(gambleNumber);
-            console.log(guess);
-            console.log(guess > 1 && guess < 11);
-            console.log(guess === gambleNumber);
-            if (guess > 1 && guess < 11) {
-                if (guess === gambleNumber) {
-                    message.channel.send('Correct! <:HYPERS:794746882760769618>');
-                }
-            }
+                client.once('message', guessMessage => {
+                    const guess = Math.round(parseInt(guessMessage.content));
+                    if (guess > 1 && guess < 11) {
+                        if (guess === gambleNumber) {
+                            message.channel.send('Correct! <:HYPERS:794746882760769618>');
+                        } else {
+                            message.channel.send(`Incorrect. <:FeelsBadMan:794744572718481408>  The number was ${gambleNumber}.`)
+                        }
+                    }
+                });
         });
-        break;
-
-    case 'test':
-            message.channel.send('no tests today <:pepePOG:796983161249988648>');
+        
         break;
 
     case 'jamtime':
@@ -122,33 +121,25 @@ client.on('message', message => {
                     .then(() => {
                         sent.react('❌');
                         const filterX = (reaction, user) => {
-                            return reaction.emoji.name === '❌' && user.id === user.id;
+                            return reaction.emoji.name === '❌' && user.id === user.id && !(user.bot);
                         };
                         const collectorX = sent.createReactionCollector(filterX);
                         collectorX.on('collect', (reaction, user) => {
-                            if (!(user.id === '840287143204880444')) {
-                                if (user.id === '306589457908498433') {
-                                    message.channel.send("Sheeshus Sheeshius absent jammer <:Sadge:804521949794795601>");
-                                } else {
-                                    message.channel.send(`<@!${user.id}> absent jammer <:Sadge:804521949794795601>`);
-                                }
-                            }
+                            message.channel.send(`${(message.guild.members.cache.get(user.id)).nickname} absent jammer <:Sadge:804521949794795601>`);
                         });
                         const filterY = (reaction, user) => {
-                            return reaction.emoji.name === '✅' && user.id === user.id;
+                            return reaction.emoji.name === '✅' && user.id === user.id && !(user.bot);
                         };
                         const collectorY = sent.createReactionCollector(filterY);
                         collectorY.on('collect', (reaction, user) => {
-                            if (!(user.id === '840287143204880444')) {
-                                if (user.id === '306589457908498433') {
-                                    message.channel.send("Sheeshus Sheeshius presnt jammer <:FeelsOkayMan:785613008247193660>");
-                                } else {
-                                    message.channel.send(`<@!${user.id}> present jammer <:FeelsOkayMan:785613008247193660>`);
-                                }
-                            }
+                            message.channel.send(`${(message.guild.members.cache.get(user.id).nickname)} present jammer <:FeelsOkayMan:785613008247193660>`);
                         });
                     });
             });
+            break;
+
+        case 'test':
+            message.channel.send('no tests today <:pepePOG:796983161249988648>');
             break;
 	}
 });
