@@ -23,6 +23,7 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Ping', value: "Sends 'pong' instantly.  Used to test bot's connection or if the bot is online." },
         { name: 'Help', value: 'Sends this embed.' },
         { name: 'Catjam', value: 'Sends a gif of a cat jamming.' },
+        { name: 'Delete', value: 'Sends a picture of Pepe holding a sign that says "Delete That!!"' },
         { name: 'Joe', value: 'mama' },
         { name: 'Ligma', value: 'balls' },
         { name: 'Troll', value: 'Sends the message declared after the command 25 times.' },
@@ -35,7 +36,11 @@ client.login(token);
 
 // =====ACTIONS=====\\
 client.on('message', message => {
-	if (!message.content.startsWith(prefix) || message.author.bot) return;
+    if (message.content === 'https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg') {
+        message.channel.bulkDelete(2);
+        console.log('Delete That!! activated.');
+    }
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
     const guild = client.guilds.cache.get('761347053983891496');
@@ -62,6 +67,11 @@ client.on('message', message => {
 	case 'catjam':
         message.delete();
         message.channel.send('https://tenor.com/view/cat-cat-jam-nod-pet-kitty-gif-17932554');
+        break;
+
+    case 'delete':
+        message.delete();
+        message.channel.send('https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg');
         break;
 
     case 'joe':
@@ -99,7 +109,8 @@ client.on('message', message => {
         break;
 
     case 'gamble':
-        message.channel.send('I am thinking of a number between 1 and 10.  What is the number?').then(sent => {
+        // eslint-disable-next-line no-unused-vars
+        message.channel.send('I am thinking of a number between 1 and 10.  What is the number?').then(_nil => {
         const gambleNumber = Math.round(Math.random() * 10);
                 client.once('message', guessMessage => {
                     const guess = Math.round(parseInt(guessMessage.content));
@@ -107,12 +118,12 @@ client.on('message', message => {
                         if (guess === gambleNumber) {
                             message.channel.send('Correct! <:HYPERS:794746882760769618>');
                         } else {
-                            message.channel.send(`Incorrect. <:FeelsBadMan:794744572718481408>  The number was ${gambleNumber}.`)
+                            message.channel.send(`Incorrect. <:FeelsBadMan:794744572718481408>  The number was ${gambleNumber}.`);
                         }
                     }
                 });
         });
-        
+
         break;
 
     case 'jamtime':
