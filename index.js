@@ -28,6 +28,7 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Ligma', value: 'balls' },
         { name: 'Troll', value: 'Sends the message declared after the command 25 times.' },
         { name: 'Gamble', value: 'Guessing game for numbers between 1 and 10.' },
+        { name: 'Coinflip', value: 'Flips a coin, lands on heads or tails.' },
         { name: 'Jamtime', value: 'Pings everyone asking for jamtime and adds yes/no reactions.\n\nIf someone reacts yes, they get present jammer <:FeelsOkayMan:785613008247193660>.\nIf someone reacts no, they get absent jammer <:Sadge:804521949794795601>.' },
     )
     .setFooter('ligma');
@@ -51,8 +52,6 @@ client.on('message', message => {
     // console.log(`args size: ${args.length}`);
 	// console.log(`command: ${command}`);
 	// console.log(`guild: ${guild}`);
-    const tempVar = message.guild.members.fetch(message.author.id);
-    console.log(tempVar.nickname);
     console.log(' ');
     console.log(`input: ${command} ${args}`);
     switch (command) {
@@ -123,7 +122,16 @@ client.on('message', message => {
                     }
                 });
         });
+        break;
 
+    case 'coinflip':
+        const flipNumber = Math.round(Math.random());
+        console.log(flipNumber);
+        if (flipNumber === 1) {
+            message.channel.send('Heads!');
+        } else {
+            message.channel.send('Tails!');
+        }
         break;
 
     case 'jamtime':
