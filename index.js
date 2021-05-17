@@ -8,6 +8,7 @@ const client = new Discord.Client();
 
 client.once('ready', () => {
     console.log('Sauron is now online.');
+    client.user.setStatus("online");
 });
 
 const { prefix } = require('./config.json');
@@ -71,6 +72,15 @@ client.on('message', message => {
     case 'delete':
         message.delete();
         message.channel.send('https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg');
+        // ToDo: delete replied message if message is a reply.
+        break;
+
+    case 'purge':
+        try {
+            message.channel.bulkDelete(args[0]);
+        } catch (err) {
+            message.channel.send(err);
+        }
         break;
 
     case 'joe':
@@ -85,7 +95,10 @@ client.on('message', message => {
 		if (!message.mentions.users.size) {
 			return message.channel.send('No one is abcent <:FeelsOkayMan:785613008247193660>');
 		} else {
-            console.log(guild.members);
+            console.log(message.mentions.users.first().presence);
+            console.log(message.guild.members)
+            message.channel.send(`testing 1 <@!${message.mentions.users.first().id}>`)
+            message.channel.send(`testing 2 ${message.mentions.users.first().presence.status}`);
         }
         break;
 
@@ -158,7 +171,13 @@ client.on('message', message => {
             break;
 
         case 'test':
-            message.channel.send('no tests today <:pepePOG:796983161249988648>');
+            // message.channel.send('no tests today <:pepePOG:796983161249988648>');
+            let promiseLoopTest = message.guild.members;
+            console.log(`promiseLoopTest: ${promiseLoopTest}`);
+            /*
+            promiseLoopTest.forEach(async (element, key, map) => {
+                console.log(`forEach loop test: ${element}`);
+            });*/
             break;
 	}
 });
