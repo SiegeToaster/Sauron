@@ -75,14 +75,6 @@ client.on('message', message => {
         // ToDo: delete replied message if message is a reply.
         break;
 
-    case 'purge':
-        try {
-            message.channel.bulkDelete(args[0]);
-        } catch (err) {
-            message.channel.send(err);
-        }
-        break;
-
     case 'joe':
         message.channel.send('joe mama');
         break;
