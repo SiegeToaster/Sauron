@@ -1,7 +1,4 @@
-/* eslint-disable quotes */
 /* eslint-disable no-case-declarations */
-/* eslint-disable brace-style */
-/* eslint-disable indent */
 // =====SETUP=====\\
 const Discord = require('discord.js');
 const client = new Discord.Client();
@@ -42,10 +39,13 @@ client.on('message', message => {
         message.channel.bulkDelete(2);
         console.log('Delete That!! activated.');
     }
+    if (message.content.includes('sus')) {
+        message.channel.send('https://www.youtube.com/watch?v=0bZ0hkiIKt0');
+    }
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
-    const guild = client.guilds.cache.get('761347053983891496');
+    // const guild = client.guilds.cache.get('761347053983891496');
 
 	// =====DEBUG=====\\
 	// console.log(`args: ${args}`);
@@ -88,8 +88,8 @@ client.on('message', message => {
 			return message.channel.send('No one is abcent <:FeelsOkayMan:785613008247193660>');
 		} else {
             console.log(message.mentions.users.first().presence);
-            console.log(message.guild.members)
-            message.channel.send(`testing 1 <@!${message.mentions.users.first().id}>`)
+            console.log(message.guild.members);
+            message.channel.send(`testing 1 <@!${message.mentions.users.first().id}>`);
             message.channel.send(`testing 2 ${message.mentions.users.first().presence.status}`);
         }
         break;
@@ -164,7 +164,7 @@ client.on('message', message => {
 
         case 'test':
             // message.channel.send('no tests today <:pepePOG:796983161249988648>');
-            let promiseLoopTest = message.guild.members;
+            const promiseLoopTest = message.guild.members;
             console.log(`promiseLoopTest: ${promiseLoopTest}`);
             /*
             promiseLoopTest.forEach(async (element, key, map) => {
