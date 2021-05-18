@@ -46,14 +46,13 @@ client.on('message', message => {
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
     // const guild = client.guilds.cache.get('761347053983891496');
-
+    console.log(' ');
 	// =====DEBUG=====\\
 	// console.log(`args: ${args}`);
     // console.log(`1st element of args: ${args[0]}`);
     // console.log(`args size: ${args.length}`);
 	// console.log(`command: ${command}`);
 	// console.log(`guild: ${guild}`);
-    console.log(' ');
     console.log(`input: ${command} ${args}`);
     switch (command) {
 	case 'ping':
@@ -85,12 +84,17 @@ client.on('message', message => {
 
 	case 'absent':
 		if (!message.mentions.users.size) {
-			return message.channel.send('No one is abcent <:FeelsOkayMan:785613008247193660>');
+			message.channel.send('No one is abcent <:FeelsOkayMan:785613008247193660>');
+            let allMembers = (message.guild.members.cache);
+            console.log(allMembers.first().id);
+            delete allMembers.first();
+            console.log(allMembers.first().id);
 		} else {
-            console.log(message.mentions.users.first().presence);
-            console.log(message.guild.members);
-            message.channel.send(`testing 1 <@!${message.mentions.users.first().id}>`);
-            message.channel.send(`testing 2 ${message.mentions.users.first().presence.status}`);
+            let tempPresence = (message.mentions.users.first().presence.status);
+            if (tempPresence === 'dnd') {
+                tempPresence = 'offline';
+            }
+            message.channel.send(`${(message.guild.members.cache.get(message.mentions.users.first().id)).nickname} is ${tempPresence}`);
         }
         break;
 
@@ -164,12 +168,9 @@ client.on('message', message => {
 
         case 'test':
             // message.channel.send('no tests today <:pepePOG:796983161249988648>');
-            const promiseLoopTest = message.guild.members;
-            console.log(`promiseLoopTest: ${promiseLoopTest}`);
-            /*
-            promiseLoopTest.forEach(async (element, key, map) => {
-                console.log(`forEach loop test: ${element}`);
-            });*/
+            message.channel.send(`${message.guild.members.cache}`);
+            const tempMap = message.guild.members.cache.array();
+            console.log(tempMap);
             break;
 	}
 });
