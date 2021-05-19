@@ -30,6 +30,7 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Jamtime', value: 'Pings everyone asking for jamtime and adds yes/no reactions.\n\nIf someone reacts yes, they get present jammer <:FeelsOkayMan:785613008247193660>.\nIf someone reacts no, they get absent jammer <:Sadge:804521949794795601>.' },
     )
     .setFooter('ligma');
+let fullMessage = '';
 
 client.login(token);
 
@@ -68,6 +69,22 @@ client.on('message', message => {
         message.channel.send('https://tenor.com/view/cat-cat-jam-nod-pet-kitty-gif-17932554');
         break;
 
+    case 'ben10':
+        message.delete();
+        if (message.author.id == '495290130924437516') {
+            message.channel.send('fuck off Ben.');
+        } else {
+            fullMessage = '';
+            if (args) {
+                args.forEach(element => {
+                    fullMessage = fullMessage + element + ' ';
+                });
+            }
+            message.channel.send(`${fullMessage}`);
+            message.channel.send('https://media.discordapp.net/attachments/831202194673107005/844378006147694622/Thats_far_enough.PNG');
+        }
+        break;
+
     case 'delete':
         message.delete();
         message.channel.send('https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg');
@@ -84,14 +101,32 @@ client.on('message', message => {
 
 	case 'absent':
 		if (!message.mentions.users.size) {
-			message.channel.send('No one is abcent <:FeelsOkayMan:785613008247193660>');
-            let allMembers = (message.guild.members.cache);
-            console.log(allMembers.first().id);
-            delete allMembers.first();
-            console.log(allMembers.first().id);
+            const allMembers = message.guild.members.cache.array();
+            let offlineMembers = [];
+            allMembers.forEach(element => {
+                if (element.user.bot) return;
+                if (element.presence.status == 'offline' || element.presence.status == 'idle') {
+                    offlineMembers.push(element.nickname);
+                }
+            });
+            if (offlineMembers.length < 1) {
+                message.channel.send('No one is abcent <:FeelsOkayMan:785613008247193660>');
+            } else if (offlineMembers.length === 1) {
+                    message.channel.send(`${offlineMembers} is offline <:FeelsBadMan:794744572718481408>`);
+                } else {
+                    const lastMember = offlineMembers[offlineMembers.length - 1];
+                    offlineMembers.length = offlineMembers.length - 1;
+                    if (offlineMembers.length == 1) {
+                        offlineMembers = offlineMembers + ' and ' + lastMember;
+                    } else {
+                        offlineMembers = offlineMembers.join(', ');
+                        offlineMembers = offlineMembers + ', and ' + lastMember;
+                    }
+                    message.channel.send(`${offlineMembers} are offline <:FeelsBadMan:794744572718481408>`);
+                }
 		} else {
             let tempPresence = (message.mentions.users.first().presence.status);
-            if (tempPresence === 'dnd') {
+            if (tempPresence === 'idle') {
                 tempPresence = 'offline';
             }
             message.channel.send(`${(message.guild.members.cache.get(message.mentions.users.first().id)).nickname} is ${tempPresence}`);
@@ -103,13 +138,13 @@ client.on('message', message => {
         if (args.length < 1) {
             return message.channel.send('No one to troll <:FeelsBadMan:794744572718481408>');
         } else {
-            let fullMessage = '';
-                for (let i = 0; i < args.length; i++) {
-                if(args[i].includes('<@!306589457908498433>')) {
-                    args[i] = (message.guild.members.cache.get('306589457908498433')).nickname;
-                }
-                fullMessage = fullMessage + args[i] + ' ';
-            }
+            fullMessage = '';
+                args.forEach(element => {
+                    if(element.includes('<@!306589457908498433>')) {
+                        element = (message.guild.members.cache.get('306589457908498433')).nickname;
+                    }
+                    fullMessage = fullMessage + element + ' ';
+                });
             for (let i = 0; i < 25; i++) {
                 message.channel.send(fullMessage);
             }
@@ -167,10 +202,7 @@ client.on('message', message => {
             break;
 
         case 'test':
-            // message.channel.send('no tests today <:pepePOG:796983161249988648>');
-            message.channel.send(`${message.guild.members.cache}`);
-            const tempMap = message.guild.members.cache.array();
-            console.log(tempMap);
+            message.channel.send('no tests today <:pepePOG:796983161249988648>');
             break;
 	}
 });
