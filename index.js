@@ -2,14 +2,25 @@
 // =====SETUP=====\\
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const fs = require('fs');
+const readline = require('readline');
+const { google } = require('googleapis');
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
+const TOKEN_PATH = 'token.json';
+fs.readFile('credentials.json', (err, content) => {
+    if (err) return console.log('Error loading client secret file:', err);
+    authorize(JSON.parse(content), getScore);
+});
+let authCode = '';
 
 client.once('ready', () => {
+    console.log('');
     console.log('Sauron is now online.');
     client.user.setStatus("online");
 });
 
 const { prefix } = require('./config.json');
-const { token } = require('./private.json');
+const { discord_token } = require('./private.json');
 const helpEmbed = new Discord.MessageEmbed()
     .setColor('#0099ff')
     .setTitle('Help')
@@ -32,7 +43,7 @@ const helpEmbed = new Discord.MessageEmbed()
     .setFooter('ligma');
 let fullMessage = '';
 
-client.login(token);
+client.login(discord_token);
 
 // =====ACTIONS=====\\
 client.on('message', message => {
@@ -71,9 +82,6 @@ client.on('message', message => {
 
     case 'ben10':
         message.delete();
-        if (message.author.id == '495290130924437516') {
-            message.channel.send('fuck off Ben.');
-        } else {
             fullMessage = '';
             if (args) {
                 args.forEach(element => {
@@ -82,7 +90,6 @@ client.on('message', message => {
             }
             message.channel.send(`${fullMessage}`);
             message.channel.send('https://media.discordapp.net/attachments/831202194673107005/844378006147694622/Thats_far_enough.PNG');
-        }
         break;
 
     case 'delete':
@@ -201,8 +208,72 @@ client.on('message', message => {
             });
             break;
 
+        case 'rate':
+            message.channel.send(`Score of ${args[0]} successfully added to ${(message.guild.members.cache.get(message.mentions.users.first().id)).nickname}.`);
+            message.channel.send('Failed to add score.');
+            break;
+
+        case 'getscore':
+            getScore(authCode, message);
+            break;
+
         case 'test':
             message.channel.send('no tests today <:pepePOG:796983161249988648>');
+            getScore(authCode, message);
             break;
 	}
 });
+
+function authorize(credentials, callback) {
+    const { client_secret, client_id, redirect_uris } = credentials.installed;
+    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+
+    fs.readFile(TOKEN_PATH, (err, token) => {
+        if (err) return getNewToken(oAuth2Client, callback);
+        oAuth2Client.setCredentials(JSON.parse(token));
+        authCode = oAuth2Client;
+        callback(oAuth2Client);
+    });
+}
+
+function getNewToken(oAuth2Client, callback) {
+    const authUrl = oAuth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: SCOPES,
+    });
+    console.log('Authorize this app by visiting this url: ', authUrl);
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
+    rl.question('Enter the code from that page here: ', (code) => {
+        rl.close();
+        oAuth2Client.getToken(code, (err, token) => {
+            if (err) return console.error('Error while trying to retrieve access token', err);
+            oAuth2Client.setCredentials(token);
+            fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+                if (err) return console.error(err);
+                console.log('Token stored to ', TOKEN_PATH);
+            });
+            callback(oAuth2Client);
+        });
+    });
+}
+
+function getScore(auth, message) {
+    const sheets = google.sheets({ version: 'v4', auth });
+    sheets.spreadsheets.values.get({
+        spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
+        range: 'A2:B4',
+    }, (err, res) => {
+        if (err) return console.log('The API returned an error: ' + err);
+        const rows = res.data.values;
+        if (rows.length && message) {
+            rows.map((row) => {
+                message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname}: ${row[1]}`);
+            });
+        } else {
+            console.log('No data found.');
+        }
+    });
+}
