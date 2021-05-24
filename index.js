@@ -21,6 +21,7 @@ client.once('ready', () => {
 
 const { prefix } = require('./config.json');
 const { discord_token } = require('./private.json');
+const { stringify } = require('querystring');
 const helpEmbed = new Discord.MessageEmbed()
     .setColor('#0099ff')
     .setTitle('Help')
@@ -209,8 +210,13 @@ client.on('message', message => {
             break;
 
         case 'rate':
-            message.channel.send(`Score of ${args[0]} successfully added to ${(message.guild.members.cache.get(message.mentions.users.first().id)).nickname}.`);
+            console.log(args[0]);
+            const rateSuccess = setScore(authCode, args[0], args[1]);
+            if (rateSuccess) {
+                message.channel.send(`Score of ${args[0]} successfully added to ${(message.guild.members.cache.get(message.mentions.users.first().id)).nickname}.`);
+            } else {
             message.channel.send('Failed to add score.');
+            }
             break;
 
         case 'getscore':
@@ -218,8 +224,8 @@ client.on('message', message => {
             break;
 
         case 'test':
-            message.channel.send('no tests today <:pepePOG:796983161249988648>');
-            getScore(authCode, message);
+            // message.channel.send('no tests today <:pepePOG:796983161249988648>');
+            setScore(authCode, args[0], args[1]);
             break;
 	}
 });
@@ -276,4 +282,25 @@ function getScore(auth, message) {
             console.log('No data found.');
         }
     });
+}
+
+function setScore(auth, range, value) {
+    const sheets = google.sheets({ version: 'v4', auth });
+    const request = {
+        spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
+        range: range,
+        valueInputOption: 'RAW',
+        resource: {
+            "range": range,
+            "values": [[value]],
+        },
+        auth: auth,
+    };
+    try {
+        (sheets.spreadsheets.values.update(request)).data;
+        return true;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
 }
