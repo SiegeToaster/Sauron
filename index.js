@@ -9,7 +9,7 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const TOKEN_PATH = 'token.json';
 fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
-    authorize(JSON.parse(content), getScore);
+    authorize(JSON.parse(content), getTotalScore);
 });
 let authCode = '';
 
@@ -21,7 +21,6 @@ client.once('ready', () => {
 
 const { prefix } = require('./config.json');
 const { discord_token } = require('./private.json');
-const { stringify } = require('querystring');
 const helpEmbed = new Discord.MessageEmbed()
     .setColor('#0099ff')
     .setTitle('Help')
@@ -29,17 +28,21 @@ const helpEmbed = new Discord.MessageEmbed()
     .setDescription('A list of commands for the Sauron bot.')
     .addFields(
         { name: '\u200B', value: '\u200B' },
-        { name: 'Prefix', value: 'Use this character at the beginning of any message that is a command\n?' },
+        { name: 'Prefix', value: `Use this character at the beginning of any message that is a command\n${prefix}` },
         { name: 'Ping', value: "Sends 'pong' instantly.  Used to test bot's connection or if the bot is online." },
         { name: 'Help', value: 'Sends this embed.' },
         { name: 'Catjam', value: 'Sends a gif of a cat jamming.' },
+        { name: 'Ben10', value: 'Sends the text you put after the command and a picture of a guy with his hand out.' },
         { name: 'Delete', value: 'Sends a picture of Pepe holding a sign that says "Delete That!!"' },
         { name: 'Joe', value: 'mama' },
         { name: 'Ligma', value: 'balls' },
+        { name: 'Absent', value: 'Checks is people are offline.  If people are pinged after command, it only checks those, otherwise, it checks everyone.' },
         { name: 'Troll', value: 'Sends the message declared after the command 25 times.' },
         { name: 'Gamble', value: 'Guessing game for numbers between 1 and 10.' },
         { name: 'Coinflip', value: 'Flips a coin, lands on heads or tails.' },
         { name: 'Jamtime', value: 'Pings everyone asking for jamtime and adds yes/no reactions.\n\nIf someone reacts yes, they get present jammer <:FeelsOkayMan:785613008247193660>.\nIf someone reacts no, they get absent jammer <:Sadge:804521949794795601>.' },
+        { name: 'Rate', value: 'Sets the score in the database.  After the command, a user must be mentioned followed by a number (the score).  Example:\n?rate `@Willius Dominus` 10' },
+        { name: 'Getscore', value: 'Gets the score for everyone in the database.' },
     )
     .setFooter('ligma');
 let fullMessage = '';
@@ -55,7 +58,7 @@ client.on('message', message => {
     if (message.content.includes('sus')) {
         message.channel.send('https://www.youtube.com/watch?v=0bZ0hkiIKt0');
     }
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
+    if (!message.content.startsWith(prefix)) return;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
     // const guild = client.guilds.cache.get('761347053983891496');
@@ -108,36 +111,21 @@ client.on('message', message => {
         break;
 
 	case 'absent':
-		if (!message.mentions.users.size) {
-            const allMembers = message.guild.members.cache.array();
-            let offlineMembers = [];
-            allMembers.forEach(element => {
-                if (element.user.bot) return;
-                if (element.presence.status == 'offline' || element.presence.status == 'idle') {
-                    offlineMembers.push(element.nickname);
-                }
-            });
-            if (offlineMembers.length < 1) {
-                message.channel.send('No one is abcent <:FeelsOkayMan:785613008247193660>');
-            } else if (offlineMembers.length === 1) {
-                    message.channel.send(`${offlineMembers} is offline <:FeelsBadMan:794744572718481408>`);
-                } else {
-                    const lastMember = offlineMembers[offlineMembers.length - 1];
-                    offlineMembers.length = offlineMembers.length - 1;
-                    if (offlineMembers.length == 1) {
-                        offlineMembers = offlineMembers + ' and ' + lastMember;
-                    } else {
-                        offlineMembers = offlineMembers.join(', ');
-                        offlineMembers = offlineMembers + ', and ' + lastMember;
-                    }
-                    message.channel.send(`${offlineMembers} are offline <:FeelsBadMan:794744572718481408>`);
-                }
-		} else {
-            let tempPresence = (message.mentions.users.first().presence.status);
-            if (tempPresence === 'idle') {
-                tempPresence = 'offline';
+		let offlineMembers = getOfflineMembers(message.mentions.members.array(), message);
+        if (offlineMembers.length < 1) {
+            message.channel.send('No one is absent <:FeelsOkayMan:785613008247193660>');
+        } else if (offlineMembers.length === 1) {
+            message.channel.send(`${offlineMembers} is absent <:FeelsBadMan:794744572718481408>`);
+        } else {
+            const lastMember = offlineMembers[offlineMembers.length - 1];
+            offlineMembers.length = offlineMembers.length - 1;
+            if (offlineMembers.length == 1) {
+                offlineMembers = offlineMembers + ' and ' + lastMember;
+            } else {
+                offlineMembers = offlineMembers.join(', ');
+                offlineMembers = offlineMembers + ', and ' + lastMember;
             }
-            message.channel.send(`${(message.guild.members.cache.get(message.mentions.users.first().id)).nickname} is ${tempPresence}`);
+            message.channel.send(`${offlineMembers} are absent <:FeelsBadMan:794744572718481408>`);
         }
         break;
 
@@ -210,22 +198,33 @@ client.on('message', message => {
             break;
 
         case 'rate':
-            console.log(args[0]);
+            switch(args[0]) {
+                case '<@!356642729394044932>':
+                    args[0] = 'B2';
+                    break;
+
+                case '<@!306589457908498433>':
+                    args[0] = 'B3';
+                    break;
+
+                case '<@!495290130924437516>':
+                    args[0] = 'B4';
+                    break;
+            }
             const rateSuccess = setScore(authCode, args[0], args[1]);
             if (rateSuccess) {
-                message.channel.send(`Score of ${args[0]} successfully added to ${(message.guild.members.cache.get(message.mentions.users.first().id)).nickname}.`);
+                message.channel.send(`Score of ${args[1]} successfully added to ${message.mentions.users.first()}.`);
             } else {
             message.channel.send('Failed to add score.');
             }
             break;
 
         case 'getscore':
-            getScore(authCode, message);
+            getTotalScore(authCode, message);
             break;
 
         case 'test':
-            // message.channel.send('no tests today <:pepePOG:796983161249988648>');
-            setScore(authCode, args[0], args[1]);
+            message.channel.send('no tests today <:pepePOG:796983161249988648>');
             break;
 	}
 });
@@ -266,7 +265,7 @@ function getNewToken(oAuth2Client, callback) {
     });
 }
 
-function getScore(auth, message) {
+function getTotalScore(auth, message) {
     const sheets = google.sheets({ version: 'v4', auth });
     sheets.spreadsheets.values.get({
         spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
@@ -284,15 +283,40 @@ function getScore(auth, message) {
     });
 }
 
-function setScore(auth, range, value) {
+async function getSpecificScore(auth, range) {
+    const promise = new Promise((resolve, reject) => {
+        const sheets = google.sheets({ version: 'v4', auth });
+        sheets.spreadsheets.values.get({
+            spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
+            range: range,
+        }, (err, res) => {
+            if (err) return console.log('The API returned an error: ' + err);
+            const rows = parseInt(res.data.values);
+            console.log(`Rows: ${rows}`);
+            if (rows) {
+                console.log(`Return: ${rows}`);
+                resolve(rows);
+            } else {
+                console.log('No data found.');
+                reject();
+            }
+        });
+    });
+    return await promise;
+}
+
+async function setScore(auth, range, value) {
+    const previousValue = await getSpecificScore(authCode, range);
+    console.log(previousValue);
     const sheets = google.sheets({ version: 'v4', auth });
+    console.log(`PreviousValue: ${previousValue}`);
     const request = {
         spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
         range: range,
         valueInputOption: 'RAW',
         resource: {
             "range": range,
-            "values": [[value]],
+            "values": [[value + previousValue]],
         },
         auth: auth,
     };
@@ -303,4 +327,22 @@ function setScore(auth, range, value) {
         console.error(err);
         return false;
     }
+}
+
+function getOfflineMembers(subjects, message) {
+    const membersToReturn = [];
+    if (!subjects.length) {
+        const allMembers = message.guild.members.cache.array();
+        allMembers.forEach(element => {
+            if (element.bot) return;
+            const tempPresence = (element.presence.status);
+            if(tempPresence == 'offline' || tempPresence == 'idle') membersToReturn.push(element.nickname);
+        });
+    } else {
+        subjects.forEach(element => {
+            const tempPresence = (element.presence.status);
+            if(tempPresence == 'offline' || tempPresence == 'idle') membersToReturn.push(element.nickname);
+        });
+    }
+    return membersToReturn;
 }
