@@ -49,7 +49,7 @@ let fullMessage = '';
 
 client.login(discord_token);
 
-// =====ACTIONS=====\\
+// =====ACTIONS===== \\
 client.on ('message', message => {
     if (message.content === 'https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg') {
         message.channel.bulkDelete(2);
@@ -198,6 +198,7 @@ client.on ('message', message => {
             break;
 
         case 'rate':
+            if (args[0] == `<@!${message.author.id}>`) return message.channel.send('Invalid user - Rule 10 <:FeelsWeirdMan:792656734409195542>');
             if (args[1] < 1 || args[1] > 10) return message.channel.send('Invalid rating <:FeelsWeirdMan:792656734409195542>');
             switch (args[0]) {
                 case '<@!356642729394044932>':
@@ -246,10 +247,12 @@ client.on ('message', message => {
 
         case 'test':
             message.channel.send('no tests today <:pepePOG:796983161249988648>');
+            console.log(args[0] == `<@!${message.author.id}>`);
             break;
 	}
 });
 
+// =====Functions===== \\
 function authorize(credentials, callback) {
     const { client_secret, client_id, redirect_uris } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
