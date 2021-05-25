@@ -42,7 +42,7 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Coinflip', value: 'Flips a coin, lands on heads or tails.' },
         { name: 'Jamtime', value: 'Pings everyone asking for jamtime and adds yes/no reactions.\n\nIf someone reacts yes, they get present jammer <:FeelsOkayMan:785613008247193660>.\nIf someone reacts no, they get absent jammer <:Sadge:804521949794795601>.' },
         { name: 'Rate', value: 'Sets the score in the database.  After the command, a user must be mentioned followed by a number (the score).  Example:\n?rate `@Willius Dominus` 10' },
-        { name: 'Getscore', value: 'Gets the score for everyone in the database.' },
+        { name: 'Getscore', value: 'Gets the score for everyone in the database.  Optional: add mention(s) after the command to get their score only.  Example:\n?getscore\n?getScore `@Willius Dominus` `@Bennamus Jullius`' },
     )
     .setFooter('ligma');
 let fullMessage = '';
@@ -50,7 +50,7 @@ let fullMessage = '';
 client.login(discord_token);
 
 // =====ACTIONS=====\\
-client.on('message', message => {
+client.on ('message', message => {
     if (message.content === 'https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg') {
         message.channel.bulkDelete(2);
         console.log('Delete That!! activated.');
@@ -198,17 +198,18 @@ client.on('message', message => {
             break;
 
         case 'rate':
-            switch(args[0]) {
+            if (args[1] < 1 || args[1] > 10) return message.channel.send('Invalid rating <:FeelsWeirdMan:792656734409195542>');
+            switch (args[0]) {
                 case '<@!356642729394044932>':
-                    args[0] = 'B2';
+                    args[0] = 'B2:D2';
                     break;
 
                 case '<@!306589457908498433>':
-                    args[0] = 'B3';
+                    args[0] = 'B3:D3';
                     break;
 
                 case '<@!495290130924437516>':
-                    args[0] = 'B4';
+                    args[0] = 'B4:D4';
                     break;
             }
             const rateSuccess = setScore(authCode, args[0], args[1]);
@@ -220,7 +221,27 @@ client.on('message', message => {
             break;
 
         case 'getscore':
-            getTotalScore(authCode, message);
+            if (message.mentions.members.array().length < 1) {
+                getTotalScore(authCode, message);
+            } else {
+                message.mentions.members.array().forEach(element => {
+                    console.log(element.id);
+                    switch (element.id) {
+                        case '356642729394044932':
+                        element = 'A2:E2';
+                        break;
+
+                    case '306589457908498433':
+                        element = 'A3:E3';
+                        break;
+
+                    case '495290130924437516':
+                        element = 'A4:E4';
+                        break;
+                    }
+                    getIndividualScore(authCode, element, message);
+                });
+            }
             break;
 
         case 'test':
@@ -269,13 +290,13 @@ function getTotalScore(auth, message) {
     const sheets = google.sheets({ version: 'v4', auth });
     sheets.spreadsheets.values.get({
         spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
-        range: 'A2:B4',
+        range: 'A2:E4',
     }, (err, res) => {
         if (err) return console.log('The API returned an error: ' + err);
         const rows = res.data.values;
         if (rows.length && message) {
             rows.map((row) => {
-                message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname}: ${row[1]}`);
+                message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]}`);
             });
         } else {
             console.log('No data found.');
@@ -284,39 +305,53 @@ function getTotalScore(auth, message) {
 }
 
 async function getSpecificScore(auth, range) {
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve) => {
         const sheets = google.sheets({ version: 'v4', auth });
         sheets.spreadsheets.values.get({
             spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
             range: range,
         }, (err, res) => {
             if (err) return console.log('The API returned an error: ' + err);
-            const rows = parseInt(res.data.values);
-            console.log(`Rows: ${rows}`);
-            if (rows) {
-                console.log(`Return: ${rows}`);
-                resolve(rows);
-            } else {
-                console.log('No data found.');
-                reject();
-            }
+            const rows = res.data.values;
+            resolve(rows);
         });
     });
     return await promise;
 }
 
-async function setScore(auth, range, value) {
-    const previousValue = await getSpecificScore(authCode, range);
-    console.log(previousValue);
+function getIndividualScore(auth, range, message) {
     const sheets = google.sheets({ version: 'v4', auth });
-    console.log(`PreviousValue: ${previousValue}`);
+    sheets.spreadsheets.values.get({
+        spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
+        range: range,
+    }, (err, res) => {
+        if (err) return console.log('The API returned an error: ' + err);
+        const row = res.data.values[0];
+        if (row.length && message) {
+            message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]}`);
+        } else {
+            console.log('No data found.');
+        }
+    });
+}
+
+async function setScore(auth, range, value) {
+    const previousValues = await getSpecificScore(authCode, range);
+    value = parseInt(value);
+    const previousScore = parseInt(previousValues[0][0]);
+    const previousNumber = parseInt(previousValues[0][1]);
+    let highest = parseInt(previousValues[0][2]);
+    if (value > highest) {
+        highest = value;
+    }
+    const sheets = google.sheets({ version: 'v4', auth });
     const request = {
         spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
         range: range,
         valueInputOption: 'RAW',
         resource: {
             "range": range,
-            "values": [[value + previousValue]],
+            "values": [[value + previousScore, previousNumber + 1, highest]],
         },
         auth: auth,
     };
@@ -329,20 +364,15 @@ async function setScore(auth, range, value) {
     }
 }
 
+
 function getOfflineMembers(subjects, message) {
     const membersToReturn = [];
     if (!subjects.length) {
-        const allMembers = message.guild.members.cache.array();
-        allMembers.forEach(element => {
-            if (element.bot) return;
-            const tempPresence = (element.presence.status);
-            if(tempPresence == 'offline' || tempPresence == 'idle') membersToReturn.push(element.nickname);
-        });
-    } else {
-        subjects.forEach(element => {
-            const tempPresence = (element.presence.status);
-            if(tempPresence == 'offline' || tempPresence == 'idle') membersToReturn.push(element.nickname);
-        });
+        subjects = message.guild.members.cache.array();
     }
+    subjects.forEach(element => {
+        const tempPresence = (element.presence.status);
+        if(tempPresence == 'offline' || tempPresence == 'idle') membersToReturn.push(element.nickname);
+    });
     return membersToReturn;
 }
