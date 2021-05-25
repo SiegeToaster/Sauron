@@ -51,6 +51,8 @@ client.login(discord_token);
 
 // =====ACTIONS===== \\
 client.on ('message', message => {
+	const args = message.content.slice(prefix.length).trim().split(/ +/);
+	const command = args.shift().toLowerCase();
     if (message.content === 'https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg') {
         message.channel.bulkDelete(2);
         console.log('Delete That!! activated.');
@@ -59,8 +61,6 @@ client.on ('message', message => {
         message.channel.send('https://www.youtube.com/watch?v=0bZ0hkiIKt0');
     }
     if (!message.content.startsWith(prefix)) return;
-	const args = message.content.slice(prefix.length).trim().split(/ +/);
-	const command = args.shift().toLowerCase();
     // const guild = client.guilds.cache.get('761347053983891496');
     console.log(' ');
 	// =====DEBUG=====\\
