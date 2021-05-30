@@ -9,7 +9,7 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const TOKEN_PATH = 'token.json';
 fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
-    authorize(JSON.parse(content), getTotalScore);
+    authorize(JSON.parse(content));
 });
 let authCode = '';
 
@@ -57,7 +57,7 @@ client.on ('message', message => {
         message.channel.bulkDelete(2);
         console.log('Delete That!! activated.');
     }
-    if (message.content.includes('sus')) {
+    if (message.content.toLowerCase().includes('sus')) {
         message.channel.send('https://www.youtube.com/watch?v=0bZ0hkiIKt0');
     }
     if (!message.content.startsWith(prefix)) return;
@@ -214,6 +214,8 @@ client.on ('message', message => {
                     break;
             }
             const rateSuccess = setScore(authCode, args[0], args[1]);
+            console.log('rate:');
+            console.log(rateSuccess.resolve);
             if (rateSuccess) {
                 message.channel.send(`Score of ${args[1]} successfully added to ${message.mentions.users.first()}.`);
             } else {
@@ -253,19 +255,18 @@ client.on ('message', message => {
 });
 
 // =====Functions===== \\
-function authorize(credentials, callback) {
+function authorize(credentials) {
     const { client_secret, client_id, redirect_uris } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
     fs.readFile(TOKEN_PATH, (err, token) => {
-        if (err) return getNewToken(oAuth2Client, callback);
+        if (err) return getNewToken(oAuth2Client);
         oAuth2Client.setCredentials(JSON.parse(token));
         authCode = oAuth2Client;
-        callback(oAuth2Client);
     });
 }
 
-function getNewToken(oAuth2Client, callback) {
+function getNewToken(oAuth2Client) {
     const authUrl = oAuth2Client.generateAuthUrl({
         access_type: 'offline',
         scope: SCOPES,
@@ -284,7 +285,6 @@ function getNewToken(oAuth2Client, callback) {
                 if (err) return console.error(err);
                 console.log('Token stored to ', TOKEN_PATH);
             });
-            callback(oAuth2Client);
         });
     });
 }
@@ -295,7 +295,10 @@ function getTotalScore(auth, message) {
         spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
         range: 'A2:E4',
     }, (err, res) => {
-        if (err) return console.log('The API returned an error: ' + err);
+        if (err) {
+            message.channel.send('Failed to get scores <:FeelsDankMan:794744902172540968>');
+            return console.log('The API returned an error: ' + err);
+        }
         const rows = res.data.values;
         if (rows.length && message) {
             rows.map((row) => {
@@ -314,7 +317,10 @@ async function getSpecificScore(auth, range) {
             spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
             range: range,
         }, (err, res) => {
-            if (err) return console.log('The API returned an error: ' + err);
+            if (err) {
+                resolve(false);
+                return console.log('The API returned an error: ' + err);
+            }
             const rows = res.data.values;
             resolve(rows);
         });
@@ -328,7 +334,10 @@ function getIndividualScore(auth, range, message) {
         spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
         range: range,
     }, (err, res) => {
-        if (err) return console.log('The API returned an error: ' + err);
+        if (err) {
+            message.channel.send('Failed to get scores <:FeelsDankMan:794744902172540968>');
+            return console.log('The API returned an error: ' + err);
+        }
         const row = res.data.values[0];
         if (row.length && message) {
             message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]}`);
@@ -340,6 +349,9 @@ function getIndividualScore(auth, range, message) {
 
 async function setScore(auth, range, value) {
     const previousValues = await getSpecificScore(authCode, range);
+    if (!previousValues) {
+        return false;
+    }
     value = parseInt(value);
     const previousScore = parseInt(previousValues[0][0]);
     const previousNumber = parseInt(previousValues[0][1]);
