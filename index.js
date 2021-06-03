@@ -60,6 +60,9 @@ client.on ('message', message => {
     if (message.content.toLowerCase().includes('sus')) {
         message.channel.send('https://www.youtube.com/watch?v=0bZ0hkiIKt0');
     }
+    if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png')) {
+        message.delete();
+    }
     if (!message.content.startsWith(prefix)) return;
     // const guild = client.guilds.cache.get('761347053983891496');
     console.log(' ');
@@ -87,12 +90,12 @@ client.on ('message', message => {
     case 'ben10':
         message.delete();
             fullMessage = '';
-            if (args) {
+            if (args.length > 0) {
                 args.forEach(element => {
                     fullMessage = fullMessage + element + ' ';
                 });
+                message.channel.send(`${fullMessage}`);
             }
-            message.channel.send(`${fullMessage}`);
             message.channel.send('https://media.discordapp.net/attachments/831202194673107005/844378006147694622/Thats_far_enough.PNG');
         break;
 
