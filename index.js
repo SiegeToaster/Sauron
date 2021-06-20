@@ -83,6 +83,9 @@ client.on ('message', message => {
     if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png')) {
         message.delete();
     }
+    if (message.mentions.users.first()) {
+        message.channel.send('https://i.imgur.com/lqw97AX.jpg');
+    }
     if (!message.content.startsWith(prefix)) return;
     // const guild = client.guilds.cache.get('761347053983891496');
     console.log(' ');
@@ -243,14 +246,7 @@ client.on ('message', message => {
                     args[0] = 'B4:D4';
                     break;
             }
-            const rateSuccess = setScore(authCode, args[0], args[1]);
-            console.log('rate:');
-            console.log(rateSuccess.resolve);
-            if (rateSuccess) {
-                message.channel.send(`Score of ${args[1]} successfully added to ${message.mentions.users.first()}.`);
-            } else {
-            message.channel.send('Failed to add score.');
-            }
+            setScore(authCode, args[0], args[1], message);
             break;
 
         case 'getscore':
@@ -326,7 +322,7 @@ function getTotalScore(auth, message) {
     }, (err, res) => {
         if (err) {
             message.channel.send('Failed to get scores <:FeelsDankMan:794744902172540968>');
-            return console.log('The API returned an error: ' + err);
+            console.log(`The API returned an error: ${err}`);
         }
         const rows = res.data.values;
         if (rows.length && message) {
@@ -348,7 +344,7 @@ async function getSpecificScore(auth, range) {
         }, (err, res) => {
             if (err) {
                 resolve(false);
-                return console.log('The API returned an error: ' + err);
+                return console.log(`The API returned an error: ${err}`);
             }
             const rows = res.data.values;
             resolve(rows);
@@ -365,7 +361,7 @@ function getIndividualScore(auth, range, message) {
     }, (err, res) => {
         if (err) {
             message.channel.send('Failed to get scores <:FeelsDankMan:794744902172540968>');
-            return console.log('The API returned an error: ' + err);
+            return console.log(`The API returned an error: ${err}`);
         }
         const row = res.data.values[0];
         if (row.length && message) {
@@ -376,10 +372,10 @@ function getIndividualScore(auth, range, message) {
     });
 }
 
-async function setScore(auth, range, value) {
+async function setScore(auth, range, value, message) {
     const previousValues = await getSpecificScore(authCode, range);
     if (!previousValues) {
-        return false;
+        message.channel.send('Failed to add score.');
     }
     value = parseInt(value);
     const previousScore = parseInt(previousValues[0][0]);
@@ -401,10 +397,10 @@ async function setScore(auth, range, value) {
     };
     try {
         (sheets.spreadsheets.values.update(request)).data;
-        return true;
+        message.channel.send(`Score of ${value} successfully added to ${message.mentions.users.first()}.`);
     } catch (err) {
-        console.error(err);
-        return false;
+        message.channel.send('Failed to add score.');
+        console.log(`${err}`);
     }
 }
 
