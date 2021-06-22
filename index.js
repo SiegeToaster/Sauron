@@ -26,17 +26,15 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: SQLPassword,
-	database: 'sauronScores',
+	database: 'sauronscores',
 });
 connection.connect(function(err) {
     if (err) throw err;
     console.log('Connected to SQL server.');
-	const sql = "INSERT INTO scores (user) VALUES (1)";
-	connection.query(sql, function(err, result) {
-    if (err) throw err;
-    console.log("table altered");
-	console.log(result);
-  });
+    connection.query("SELECT * FROM scores", function(err, result, fields) {
+        if (err) throw err;
+        console.log(result);
+    });
 });
 
 client.once('ready', () => {
@@ -89,10 +87,10 @@ client.on ('message', message => {
     if (message.content.toLowerCase().includes('candice')) {
         message.channel.send('https://www.youtube.com/watch?v=604v-hVszTU');
     }
-    if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png')) {
+    if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png') || message.content.includes('didnt ask willius anything')) {
         message.delete();
     }
-    if (message.mentions.users.first()) {
+    if (message.mentions.users.first() || message.content.includes('@everyone') || message.content.includes('@here')) {
         message.channel.send('https://i.imgur.com/lqw97AX.jpg');
     }
     if (!message.content.startsWith(prefix)) return;
@@ -239,6 +237,34 @@ client.on ('message', message => {
             });
         break;
 
+        case 'getscore':
+            connection.query("SELECT * FROM scores", function(err, result, fields) {
+                if (err) return console.log(err);
+                if (result) {
+                    message.channel.send(result[0].userID);
+                } else {
+                    console.log(result);
+                    message.channel.send(';ailed to get scores <:FeelsBadMan:794744572718481408>');
+                }
+            });
+        break;
+
+        case 'rate':
+            const userID = 1234;
+            console.log(getSpecificScore(userID));
+            console.log('userID:');
+            console.log(userID);/*
+            console.log('totalScore:');
+            console.log(totalScore);
+            console.log('amountOfRatings:');
+            console.log(amountOfRatings);
+            console.log('highestRating:');
+            console.log(highestRating);
+            console.log('averageRating:');
+            console.log(averageRating);*/
+            // connection.query(`INSERT INTO scores (userID, totalScore, amountOfRatings, highestRating, averageRating) VALUES (${userID}, )`)
+        break;
+        
         case 'test':
             message.channel.send('no tests today <:pepePOG:796983161249988648>');
         break;
@@ -256,4 +282,45 @@ function getOfflineMembers(subjects, message) {
         if(tempPresence == 'offline' || tempPresence == 'idle') membersToReturn.push(element.nickname);
     });
     return membersToReturn;
+}
+
+async function getSpecificScore(userID) {
+    let totalScore = await connection.query(`SELECT totalScore FROM scores WHERE userID = ${userID}`, function(err, result) {
+        if (err) console.log(err); message.channel.send('Failed to set score <:FeelsBadMan:794744572718481408>'); return false;
+        if (result) {
+            // console.log(result);
+            return result;
+        } else {
+            return false;
+        }
+    });
+    console.log(totalScore);
+    let amountOfRatings = await connection.query(`SELECT amountOfRatings FROM scores WHERE userID = ${userID}`, function(err, result) {
+        if (err) console.log(err); message.channel.send('Failed to set score <:FeelsBadMan:794744572718481408>'); return false;
+        if (result) {
+            return result;
+        } else {
+            return false;
+        }
+    });
+    console.log(amountOfRatings);
+    let highestRating = await connection.query(`SELECT highestRating FROM scores WHERE userID = ${userID}`, function(err, result) {
+        if (err) console.log(err); message.channel.send('Failed to set score <:FeelsBadMan:794744572718481408>'); return false;
+        if (result) {
+            return result;
+        } else {
+            return false;
+        }
+    });
+    console.log(highestRating);
+    let averageRating = await connection.query(`SELECT averageRating FROM scores WHERE userID = ${userID}`, function(err, result) {
+        if (err) console.log(err); message.channel.send('Failed to set score <:FeelsBadMan:794744572718481408>'); return false;
+        if (result) {
+            return result;
+        } else {
+            return false;
+        }
+    });
+    console.log(averageRating);
+    return [totalScore, amountOfRatings, highestRating, averageRating];
 }
