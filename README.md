@@ -1,6 +1,16 @@
 # Sauron
 crappy Discord bot
 
+## Info/Installation
+Requires a mySQL server
+Requires a file called 'private.json' for all private info.  This must include your discord bot token and SQL root account password.  An example private.json file is:
+```
+{
+    "discord_token": "your discord bot token here",
+    "SQLPassword": "your SQL root account password here"
+}
+```
+
 ### Commands
 *An x indicates that the feature is complte*
 - [x] ping
