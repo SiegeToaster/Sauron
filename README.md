@@ -6,7 +6,7 @@ Requires a mySQL server
 use the following commands to setup the proper database, tables, and columns:
 ```
 CREATE DATABASE IF NOT EXISTS sauronScores;
-USE sauron_scores;
+USE sauronScores;
 CREATE TABLE scores (userID BIGINT, totalScore BIGINT, amountOfRatings BIGINT, highestRating TINYINT, averageRating TINYINT);
 ```
 
