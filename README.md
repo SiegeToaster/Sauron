@@ -1,6 +1,23 @@
 # Sauron
 crappy Discord bot
 
+## Info/Installation
+Requires a mySQL server
+use the following commands to setup the proper database, tables, and columns:
+```
+CREATE DATABASE IF NOT EXISTS sauronScores;
+USE sauronScores;
+CREATE TABLE scores (userID BIGINT, totalScore BIGINT, amountOfRatings BIGINT, highestRating TINYINT, averageRating TINYINT);
+```
+
+Requires a file called 'private.json' for all private info.  This must include your discord bot token and SQL root account password.  An example private.json file is:
+```
+{
+    "discord_token": "your discord bot token here",
+    "SQLPassword": "your SQL root account password here"
+}
+```
+
 ### Commands
 *An x indicates that the feature is complte*
 - [x] ping
