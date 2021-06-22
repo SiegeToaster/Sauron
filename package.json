@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^12.5.3",
-    "googleapis": "^39.2.0"
+    "googleapis": "^39.2.0",
+    "is-stream": "^2.0.0",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
     "eslint": "^7.25.0"
