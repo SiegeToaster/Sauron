@@ -7,6 +7,7 @@ const readline = require('readline');
 const { google } = require('googleapis');
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const TOKEN_PATH = 'token.json';
+const { SpreadsheetId } = require('./private.json');
 fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     authorize(JSON.parse(content));
@@ -52,7 +53,6 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Ben10', value: 'Sends the text you put after the command and a picture of a guy with his hand out.' },
         { name: 'Delete', value: 'Sends a picture of Pepe holding a sign that says "Delete That!!"' },
         { name: 'Joe', value: 'mama' },
-        { name: 'Ligma', value: 'balls' },
         { name: 'Absent', value: 'Checks is people are offline.  If people are pinged after command, it only checks those, otherwise, it checks everyone.' },
         { name: 'Troll', value: 'Sends the message declared after the command 25 times.' },
         { name: 'Gamble', value: 'Guessing game for numbers between 1 and 10.' },
@@ -76,9 +76,6 @@ client.on ('message', message => {
     }
     if (message.content.toLowerCase().includes('sus')) {
         message.channel.send('https://www.youtube.com/watch?v=0bZ0hkiIKt0');
-    }
-    if (message.content.toLowerCase().includes('candice')) {
-        message.channel.send('https://www.youtube.com/watch?v=604v-hVszTU');
     }
     if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png')) {
         message.delete();
@@ -130,10 +127,6 @@ client.on ('message', message => {
 
     case 'joe':
         message.channel.send('joe mama');
-        break;
-
-    case 'ligma':
-        message.channel.send('ligma balls');
         break;
 
 	case 'absent':
@@ -317,7 +310,7 @@ function getNewToken(oAuth2Client) {
 function getTotalScore(auth, message) {
     const sheets = google.sheets({ version: 'v4', auth });
     sheets.spreadsheets.values.get({
-        spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
+        spreadsheetId: SpreadsheetId,
         range: 'A2:E4',
     }, (err, res) => {
         if (err) {
@@ -339,7 +332,7 @@ async function getSpecificScore(auth, range) {
     const promise = new Promise((resolve) => {
         const sheets = google.sheets({ version: 'v4', auth });
         sheets.spreadsheets.values.get({
-            spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
+            spreadsheetId: SpreadsheetId,
             range: range,
         }, (err, res) => {
             if (err) {
@@ -356,7 +349,7 @@ async function getSpecificScore(auth, range) {
 function getIndividualScore(auth, range, message) {
     const sheets = google.sheets({ version: 'v4', auth });
     sheets.spreadsheets.values.get({
-        spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
+        spreadsheetId: SpreadsheetId,
         range: range,
     }, (err, res) => {
         if (err) {
@@ -386,7 +379,7 @@ async function setScore(auth, range, value, message) {
     }
     const sheets = google.sheets({ version: 'v4', auth });
     const request = {
-        spreadsheetId: '1S0-MC0BWaGxhybXlpmE9Eu9ctsjeQ2Bjdha9DBnFFHo',
+        spreadsheetId: SpreadsheetId,
         range: range,
         valueInputOption: 'RAW',
         resource: {

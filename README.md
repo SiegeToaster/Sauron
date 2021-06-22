@@ -1,8 +1,23 @@
 # Sauron
 crappy Discord bot
 
+## Info/Installation
+Requires a google sheets document and a google app that you are authorized to use.  The app must allow editing and reading your google sheets documents.  If you do not know how to set this up, read the [Google Sheets API Documentation for Node.js](https://developers.google.com/sheets/api/quickstart/nodejs).
+
+The bot also requires a file called 'private.json' for all private info.  This must include your discord bot token and google sheets spreadsheet ID.  An example private.json file is:
+```
+{
+    "discord_token": "your discord bot token here",
+    ""SpreadsheetId": "your google sheets spreadsheet ID here"
+}
+```
+
+Once everything is setup, run ``npm install`` on the folder that the bot is on.  This will download all of the required Node.js packages automatically.
+
+On the first launch, make sure to use a terminal that you can input data into as a link will appear and give you a token to paste into the terminal.
+
 ### Commands
-*An x indicates that the feature is complte*
+*A check mark indicates that the feature is complte*
 - [x] ping
     - messages back 'pong'.
 - [x] help
@@ -15,8 +30,6 @@ crappy Discord bot
     - Sends a picture of Pepe holding a sign that say "Delete That!!" (https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg).  Coincidentally, anyone sending that image makes the bot delete the message directly above it.
 - [x] joe
     - messages back 'joe mama'.
-- [x] ligma
-    - messages back 'ligma balls'.
 - [x] absent
     - Checks is people are offline.  If people are pinged after command, it only checks those, otherwise, it checks everyone.
 - [x] troll
