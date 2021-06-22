@@ -32,8 +32,6 @@ Requires a file called 'private.json' for all private info.  This must include y
     - Sends a picture of Pepe holding a sign that say "Delete That!!" (https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg).  Coincidentally, anyone sending that image makes the bot delete the message directly above it.
 - [x] joe
     - messages back 'joe mama'.
-- [x] ligma
-    - messages back 'ligma balls'.
 - [x] absent
     - Checks is people are offline.  If people are pinged after command, it only checks those, otherwise, it checks everyone.
 - [x] troll

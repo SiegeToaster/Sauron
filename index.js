@@ -84,9 +84,6 @@ client.on ('message', message => {
     if (message.content.toLowerCase().includes('sus')) {
         message.channel.send('https://www.youtube.com/watch?v=0bZ0hkiIKt0');
     }
-    if (message.content.toLowerCase().includes('candice')) {
-        message.channel.send('https://www.youtube.com/watch?v=604v-hVszTU');
-    }
     if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png') || message.content.includes('didnt ask willius anything')) {
         message.delete();
     }
@@ -137,10 +134,6 @@ client.on ('message', message => {
 
     case 'joe':
         message.channel.send('joe mama');
-    break;
-
-    case 'ligma':
-        message.channel.send('ligma balls');
     break;
 
 	case 'absent':
@@ -264,7 +257,7 @@ client.on ('message', message => {
             console.log(averageRating);*/
             // connection.query(`INSERT INTO scores (userID, totalScore, amountOfRatings, highestRating, averageRating) VALUES (${userID}, )`)
         break;
-        
+
         case 'test':
             message.channel.send('no tests today <:pepePOG:796983161249988648>');
         break;
