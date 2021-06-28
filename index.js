@@ -32,6 +32,7 @@ let reactedUsers = [`
 `];
 let pingVar = 'false';
 let prideVar = 'false';
+let prideFlag = '';
 let virginVar = 'false';
 let susVar = 'false';
 
@@ -60,11 +61,14 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Joe', value: 'mama' },
         { name: 'Absent', value: 'Checks is people are offline.  If people are pinged after command, it only checks those, otherwise, it checks everyone.' },
         { name: 'Troll', value: 'Sends the message declared after the command 25 times.' },
-        { name: 'Gamble', value: 'Guessing game for numbers between 1 and 10.' },
+        { name: 'Gamble', value: 'Guessing game for numbers between 1 and 10.  OPTIONAL: Add a number after command to automatically get answer.' },
         { name: 'Coinflip', value: 'Flips a coin, lands on heads or tails.' },
         { name: 'Jamtime', value: 'Pings everyone asking for jamtime and adds yes/no reactions.\n\nIf someone reacts yes, they get present jammer <:FeelsOkayMan:785613008247193660>.\nIf someone reacts no, they get absent jammer <:Sadge:804521949794795601>.' },
         { name: 'Rate', value: 'Sets the score in the database.  After the command, a user must be mentioned followed by a number (the score).  Example:\n?rate `@Willius Dominus` 10' },
         { name: 'Getscore', value: 'Gets the score for everyone in the database.  Optional: add mention(s) after the command to get their score only.  Example:\n?getscore\n?getScore `@Willius Dominus` `@Bennamus Jullius`' },
+        { name: 'UpdateSettings', value: 'Re-fetches settings from database.  No return' },
+        { name: 'Set', value: 'Changes settings.  After the command, a setting must be named followed by "true" or "false".  Valid settings are: "ping", "pride", "virgin", and "sus".  Example:\n?set ping true' },
+        { name: '\u200B', value: `\u200B ${prideFlag} testaroooooo` },
     )
     .setFooter('ligma');
 let fullMessage = '';
@@ -80,21 +84,21 @@ client.on ('message', message => {
         console.log('Delete That!! activated.');
     }
     if (susVar === 'true' && message.content.toLowerCase().includes('sus')) {
-        message.channel.send('https://www.youtube.com/watch?v=0bZ0hkiIKt0');
+        message.channel.send(`https://www.youtube.com/watch?v=0bZ0hkiIKt0 ${prideFlag}`);
     }
     if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png')) {
         message.delete();
     }
     if (pingVar === 'true' && message.mentions.users.first()) {
-        message.channel.send('https://i.imgur.com/lqw97AX.jpg');
+        message.channel.send(`https://i.imgur.com/lqw97AX.jpg ${prideFlag}`);
     }
     if (virginVar === 'true' && !message.author.bot) {
-        message.channel.send('https://cdn.discordapp.com/attachments/761347053983891499/858791752601042974/evening_gentlemen.png');
+        message.channel.send(`https://cdn.discordapp.com/attachments/761347053983891499/858791752601042974/evening_gentlemen.png ${prideFlag}`);
     }
-    if (prideVar === 'true' && !message.content.match('<:(prideFlag):(857496510203428864)>$')) {
+    if (prideVar === 'true' && !message.content.endsWith('🏳️‍🌈')) {
         console.log('pride');
         message.delete();
-        message.channel.send('Your message has been deleted for not having <:prideFlag:857496510203428864> at the end.  Happy Pride Month!\n<:prideFlag:857496510203428864>\n<:prideFlag:857496510203428864>\n<:prideFlag:857496510203428864>\n<:prideFlag:857496510203428864>\n<:prideFlag:857496510203428864>');
+        message.channel.send('Your message has been deleted for not having :rainbow_flag: at the end.  Happy Pride Month!\n:rainbow_flag:\n:rainbow_flag:\n:rainbow_flag:\n:rainbow_flag:\n🏳️‍🌈');
     }
     if (!message.content.startsWith(prefix)) return;
     // const guild = client.guilds.cache.get('761347053983891496');
@@ -108,16 +112,19 @@ client.on ('message', message => {
     console.log(`input: ${command} ${args}`);
     switch (command) {
 	case 'ping':
-        message.channel.send('Pong. <:prideFlag:857496510203428864>');
+        message.channel.send(`Pong. ${prideFlag}`);
+        console.log('ping');
         break;
 
     case 'help':
-        message.channel.send(helpEmbed);
+        message.channel.send(helpEmbed).then(sent => {
+            console.log(sent.content.endsWith('ligma'));
+        });
         break;
 
 	case 'catjam':
         message.delete();
-        message.channel.send('https://tenor.com/view/cat-cat-jam-nod-pet-kitty-gif-17932554 <:prideFlag:857496510203428864>');
+        message.channel.send(`https://tenor.com/view/cat-cat-jam-nod-pet-kitty-gif-17932554 ${prideFlag}`);
         break;
 
     case 'ben10':
@@ -127,27 +134,27 @@ client.on ('message', message => {
                 args.forEach(element => {
                     fullMessage = fullMessage + element + ' ';
                 });
-                message.channel.send(`${fullMessage} <:prideFlag:857496510203428864>`);
+                message.channel.send(`${fullMessage} ${prideFlag}`);
             }
-            message.channel.send('https://media.discordapp.net/attachments/831202194673107005/844378006147694622/Thats_far_enough.PNG <:prideFlag:857496510203428864>');
+            message.channel.send(`https://media.discordapp.net/attachments/831202194673107005/844378006147694622/Thats_far_enough.PNG ${prideFlag}`);
         break;
 
     case 'delete':
         message.delete();
-        message.channel.send('https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg <:prideFlag:857496510203428864>');
+        message.channel.send(`https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg ${prideFlag}`);
         // ToDo: delete replied message if message is a reply.
         break;
 
     case 'joe':
-        message.channel.send('joe mama <:prideFlag:857496510203428864>');
+        message.channel.send(`joe mama ${prideFlag}`);
         break;
 
 	case 'absent':
 		let offlineMembers = getOfflineMembers(message.mentions.members.array(), message);
         if (offlineMembers.length < 1) {
-            message.channel.send('No one is absent <:FeelsOkayMan:785613008247193660> <:prideFlag:857496510203428864>');
+            message.channel.send(`No one is absent <:FeelsOkayMan:785613008247193660> ${prideFlag}`);
         } else if (offlineMembers.length === 1) {
-            message.channel.send(`${offlineMembers} is absent <:FeelsBadMan:794744572718481408> <:prideFlag:857496510203428864>`);
+            message.channel.send(`${offlineMembers} is absent <:FeelsBadMan:794744572718481408> ${prideFlag}`);
         } else {
             const lastMember = offlineMembers[offlineMembers.length - 1];
             offlineMembers.length = offlineMembers.length - 1;
@@ -157,14 +164,14 @@ client.on ('message', message => {
                 offlineMembers = offlineMembers.join(', ');
                 offlineMembers = offlineMembers + ', and ' + lastMember;
             }
-            message.channel.send(`${offlineMembers} are absent <:FeelsBadMan:794744572718481408> <:prideFlag:857496510203428864>`);
+            message.channel.send(`${offlineMembers} are absent <:FeelsBadMan:794744572718481408> ${prideFlag}`);
         }
         break;
 
     case 'troll':
         message.delete();
         if (args.length < 1) {
-            return message.channel.send('No one to troll <:FeelsBadMan:794744572718481408> <:prideFlag:857496510203428864>');
+            return message.channel.send(`No one to troll <:FeelsBadMan:794744572718481408> ${prideFlag}`);
         } else {
             fullMessage = '';
                 args.forEach(element => {
@@ -174,41 +181,50 @@ client.on ('message', message => {
                     fullMessage = fullMessage + element + ' ';
                 });
             for (let i = 0; i < 25; i++) {
-                message.channel.send(`${fullMessage} <:prideFlag:857496510203428864>`);
+                message.channel.send(`${fullMessage} ${prideFlag}`);
             }
         }
         break;
 
     case 'gamble':
-        // eslint-disable-next-line no-unused-vars
-        message.channel.send('I am thinking of a number between 1 and 10.  What is the number? <:prideFlag:857496510203428864>').then(_nil => {
-        const gambleNumber = Math.round(Math.random() * 10);
-                client.once('message', guessMessage => {
-                    const guess = Math.round(parseInt(guessMessage.content));
-                    if (guess > 1 && guess < 11) {
-                        if (guess === gambleNumber) {
-                            message.channel.send('Correct! <:HYPERS:794746882760769618> <:prideFlag:857496510203428864>');
-                        } else {
-                            message.channel.send(`Incorrect. <:FeelsBadMan:794744572718481408>  The number was ${gambleNumber}. <:prideFlag:857496510203428864>`);
+        if (args[0] > -1 && args[0] < 11) {
+            const gambleNumber = Math.round(Math.random() * 10);
+            if (args[0] === gambleNumber) {
+                message.channel.send(`Correct! <:HYPERS:794746882760769618> ${prideFlag}`);
+            } else {
+                message.channel.send(`Incorrect. <:FeelsBadMan:794744572718481408>  The number was ${gambleNumber}. ${prideFlag}`);
+            }
+        } else {
+            // eslint-disable-next-line no-unused-vars
+            message.channel.send(`I am thinking of a number between 1 and 10.  What is the number? ${prideFlag}`).then(_nil => {
+            const gambleNumber = Math.round(Math.random() * 10);
+                    client.once('message', guessMessage => {
+                        const guess = Math.round(parseInt(guessMessage.content));
+                        if (guess > -1 && guess < 11) {
+                            if (guess === gambleNumber) {
+                                message.channel.send(`Correct! <:HYPERS:794746882760769618> ${prideFlag}`);
+                            } else {
+                                message.channel.send(`Incorrect. <:FeelsBadMan:794744572718481408>  The number was ${gambleNumber}. ${prideFlag}`);
+                            }
                         }
-                    }
-                });
-        });
+                    });
+            });
+        }
         break;
 
     case 'coinflip':
         const flipNumber = Math.round(Math.random());
         console.log(flipNumber);
         if (flipNumber === 1) {
-            message.channel.send('Heads! <:prideFlag:857496510203428864>');
+            message.channel.send(`Heads! ${prideFlag}`);
         } else {
-            message.channel.send('Tails! <:prideFlag:857496510203428864>');
+            message.channel.send(`Tails! ${prideFlag}`);
         }
         break;
 
     case 'jamtime':
             reactedUsers = [];
-            message.channel.send('@everyone jam time?  <:FeelsOkayMan:785613008247193660> <:prideFlag:857496510203428864>').then(sent => {
+            message.channel.send(`@everyone jam time?  <:FeelsOkayMan:785613008247193660> ${prideFlag}`).then(sent => {
                 sent.react('✅')
                     .then(() => {
                         sent.react('❌');
@@ -219,7 +235,7 @@ client.on ('message', message => {
                         collectorX.on('collect', (reaction, user) => {
                             if (!reactedUsers.includes(user)) {
                                 reactedUsers.push(user);
-                                message.channel.send(`${(message.guild.members.cache.get(user.id)).nickname} absent jammer <:Sadge:804521949794795601> <:prideFlag:857496510203428864>`);
+                                message.channel.send(`${(message.guild.members.cache.get(user.id)).nickname} absent jammer <:Sadge:804521949794795601> ${prideFlag}`);
                             }
                         });
                         const filterY = (reaction, user) => {
@@ -229,7 +245,7 @@ client.on ('message', message => {
                         collectorY.on('collect', (reaction, user) => {
                             if (!reactedUsers.includes(user)) {
                                 reactedUsers.push(user);
-                                message.channel.send(`${(message.guild.members.cache.get(user.id).nickname)} present jammer <:FeelsOkayMan:785613008247193660> <:prideFlag:857496510203428864>`);
+                                message.channel.send(`${(message.guild.members.cache.get(user.id).nickname)} present jammer <:FeelsOkayMan:785613008247193660> ${prideFlag}`);
                             }
                         });
                     });
@@ -237,9 +253,9 @@ client.on ('message', message => {
             break;
 
         case 'rate':
-            // if (args[0] == `<@!${message.author.id}>`) return message.channel.send('Invalid user - Rule 10 <:FeelsWeirdMan:792656734409195542>');
-            if (args[1] < 1 || args[1] > 10) return message.channel.send('Invalid rating <:FeelsWeirdMan:792656734409195542> <:prideFlag:857496510203428864>');
-            if (!args[1]) return message.channel.send('Missing Parameters <:FeelsWeirdMan:792656734409195542> <:prideFlag:857496510203428864>');
+            if (args[0] == `<@!${message.author.id}>`) return message.channel.send(`Invalid user - Rule 10 <:FeelsWeirdMan:792656734409195542> ${prideFlag}`);
+            if (args[1] < 1 || args[1] > 10) return message.channel.send(`Invalid rating <:FeelsWeirdMan:792656734409195542> ${prideFlag}`);
+            if (!args[1]) return message.channel.send(`Missing Parameters <:FeelsWeirdMan:792656734409195542> ${prideFlag}`);
             switch (args[0]) {
                 case '<@!356642729394044932>':
                     args[0] = 'B2:D2';
@@ -285,8 +301,8 @@ client.on ('message', message => {
         break;
 
         case 'set':
-            if (args[0] !== 'ping' && args[0] !== 'pride' && args[0] !== 'virgin') return message.channel.send(`${args[0]} is not a setting.`);
-            if (args[1] !== 'true' && args[1] !== 'false') return message.channel.send(`${args[1]} is an invalid setting for ${args[0]}`);
+            if (args[0] !== 'ping' && args[0] !== 'pride' && args[0] !== 'virgin' && args[0] !== 'sus') return message.channel.send(`${args[0]} is not a setting. ${prideFlag}`);
+            if (args[1] !== 'true' && args[1] !== 'false') return message.channel.send(`${args[1]} is an invalid setting for ${args[0]} ${prideFlag}`);
             switch (args[0]) {
                 case 'ping': args[0] = 'Settings!A2';
                 break;
@@ -304,8 +320,8 @@ client.on ('message', message => {
         break;
 
         case 'test':
-            message.channel.send('no tests today <:pepePOG:796983161249988648> <:prideFlag:857496510203428864>');
-            break;
+            message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
+        break;
 	}
 });
 
@@ -351,16 +367,16 @@ function getTotalScore(auth, message) {
         range: 'A2:E4',
     }, (err, res) => {
         if (err) {
-            message.channel.send('Failed to get scores <:FeelsDankMan:794744902172540968> <:prideFlag:857496510203428864>');
-            return console.log(`The API returned an error: ${err}`);
+            message.channel.send(`Failed to get scores <:FeelsDankMan:794744902172540968> ${prideFlag}`);
+            return console.error(`The API returned an error: ${err}`);
         }
         const rows = res.data.values;
         if (rows.length && message) {
             rows.map((row) => {
-                message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]} <:prideFlag:857496510203428864>`);
+                message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]} ${prideFlag}`);
             });
         } else {
-            console.log('No data found.');
+            console.error('No data found.');
         }
     });
 }
@@ -374,7 +390,7 @@ async function getSpecificScore(auth, range) {
         }, (err, res) => {
             if (err) {
                 resolve(false);
-                return console.log(`The API returned an error: ${err}`);
+                return console.error(`The API returned an error: ${err}`);
             } else {
                 const rows = res.data.values;
                 resolve(rows);
@@ -391,21 +407,21 @@ function getIndividualScore(auth, range, message) {
         range: range,
     }, (err, res) => {
         if (err) {
-            message.channel.send('Failed to get scores <:FeelsDankMan:794744902172540968> <:prideFlag:857496510203428864>');
-            return console.log(`The API returned an error: ${err}`);
+            message.channel.send(`Failed to get scores <:FeelsDankMan:794744902172540968> ${prideFlag}`);
+            return console.error(`The API returned an error: ${err}`);
         }
         const row = res.data.values[0];
         if (row.length && message) {
-            message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]} <:prideFlag:857496510203428864>`);
+            message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]} ${prideFlag}`);
         } else {
-            console.log('No data found.');
+            console.error('No data found.');
         }
     });
 }
 
 async function setScore(auth, range, value, message) {
     const previousValues = await getSpecificScore(authCode, range);
-    if (!previousValues) return message.channel.send('Failed to add score. <:prideFlag:857496510203428864>');
+    if (!previousValues) return message.channel.send(`Failed to add score. ${prideFlag}`);
     value = parseInt(value);
     const previousScore = parseInt(previousValues[0][0]);
     const previousNumber = parseInt(previousValues[0][1]);
@@ -426,18 +442,25 @@ async function setScore(auth, range, value, message) {
     };
     try {
         (sheets.spreadsheets.values.update(request)).data;
-        message.channel.send(`Score of ${value} successfully added to ${message.mentions.users.first()}. <:prideFlag:857496510203428864>`);
+        message.channel.send(`Score of ${value} successfully added to ${message.mentions.users.first()}. ${prideFlag}`);
     } catch (err) {
-        message.channel.send('Failed to add score. <:prideFlag:857496510203428864>');
-        console.log(`${err}`);
+        message.channel.send(`Failed to add score. ${prideFlag}`);
+        console.error(`${err}`);
     }
 }
 
 async function updateSettings(auth) {
     pingVar = await getSpecificSetting(auth, 'Settings!A2');
     prideVar = await getSpecificSetting(auth, 'Settings!B2');
+    if (prideVar === 'true') {
+        prideFlag = '🏳️‍🌈';
+    } else {
+        prideFlag = '';
+    }
     virginVar = await getSpecificSetting(auth, 'Settings!C2');
     susVar = await getSpecificSetting(auth, 'Settings!D2');
+
+    console.log('Settings Updated.');
 }
 
 async function getSpecificSetting(auth, range) {
@@ -460,8 +483,8 @@ async function getSpecificSetting(auth, range) {
 async function setSpecificSetting(auth, range, value, message) {
     const sheets = google.sheets({ version: 'v4', auth });
     const previousValue = await getSpecificSetting(auth, range);
-    if (!previousValue) return message.channel.send('Failed to update setting.');
-    if (value === previousValue) return message.channel.send(`Setting is already ${value}`);
+    if (!previousValue) return message.channel.send(`Failed to update setting. ${prideFlag}`);
+    if (value === previousValue) return message.channel.send(`Setting is already ${value} ${prideFlag}`);
 
     const request = {
         spreadsheetId: SpreadsheetId,
@@ -475,9 +498,9 @@ async function setSpecificSetting(auth, range, value, message) {
     };
     try {
         (sheets.spreadsheets.values.update(request)).data;
-        message.channel.send(`Successfully updated setting to ${value}`);
+        message.channel.send(`Successfully updated setting to ${value} ${prideFlag}`);
     } catch (err) {
-        message.channel.send('Failed to update setting.');
+        message.channel.send(`Failed to update setting. ${prideFlag}`);
         console.log(err);
     }
     setTimeout(function() { updateSettings(authCode); }, 1000);
