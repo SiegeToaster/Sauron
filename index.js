@@ -91,7 +91,11 @@ client.on ('message', message => {
     if (virginVar === 'true' && !message.author.bot) {
         message.channel.send('https://cdn.discordapp.com/attachments/761347053983891499/858791752601042974/evening_gentlemen.png');
     }
-
+    if (prideVar === 'true' && !message.content.match('<:(prideFlag):(857496510203428864)>$')) {
+        console.log('pride');
+        message.delete();
+        message.channel.send('Your message has been deleted for not having <:prideFlag:857496510203428864> at the end.  Happy Pride Month!\n<:prideFlag:857496510203428864>\n<:prideFlag:857496510203428864>\n<:prideFlag:857496510203428864>\n<:prideFlag:857496510203428864>\n<:prideFlag:857496510203428864>');
+    }
     if (!message.content.startsWith(prefix)) return;
     // const guild = client.guilds.cache.get('761347053983891496');
     console.log(' ');
@@ -104,7 +108,7 @@ client.on ('message', message => {
     console.log(`input: ${command} ${args}`);
     switch (command) {
 	case 'ping':
-        message.channel.send('Pong.');
+        message.channel.send('Pong. <:prideFlag:857496510203428864>');
         break;
 
     case 'help':
@@ -113,7 +117,7 @@ client.on ('message', message => {
 
 	case 'catjam':
         message.delete();
-        message.channel.send('https://tenor.com/view/cat-cat-jam-nod-pet-kitty-gif-17932554');
+        message.channel.send('https://tenor.com/view/cat-cat-jam-nod-pet-kitty-gif-17932554 <:prideFlag:857496510203428864>');
         break;
 
     case 'ben10':
@@ -123,27 +127,27 @@ client.on ('message', message => {
                 args.forEach(element => {
                     fullMessage = fullMessage + element + ' ';
                 });
-                message.channel.send(`${fullMessage}`);
+                message.channel.send(`${fullMessage} <:prideFlag:857496510203428864>`);
             }
-            message.channel.send('https://media.discordapp.net/attachments/831202194673107005/844378006147694622/Thats_far_enough.PNG');
+            message.channel.send('https://media.discordapp.net/attachments/831202194673107005/844378006147694622/Thats_far_enough.PNG <:prideFlag:857496510203428864>');
         break;
 
     case 'delete':
         message.delete();
-        message.channel.send('https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg');
+        message.channel.send('https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg <:prideFlag:857496510203428864>');
         // ToDo: delete replied message if message is a reply.
         break;
 
     case 'joe':
-        message.channel.send('joe mama');
+        message.channel.send('joe mama <:prideFlag:857496510203428864>');
         break;
 
 	case 'absent':
 		let offlineMembers = getOfflineMembers(message.mentions.members.array(), message);
         if (offlineMembers.length < 1) {
-            message.channel.send('No one is absent <:FeelsOkayMan:785613008247193660>');
+            message.channel.send('No one is absent <:FeelsOkayMan:785613008247193660> <:prideFlag:857496510203428864>');
         } else if (offlineMembers.length === 1) {
-            message.channel.send(`${offlineMembers} is absent <:FeelsBadMan:794744572718481408>`);
+            message.channel.send(`${offlineMembers} is absent <:FeelsBadMan:794744572718481408> <:prideFlag:857496510203428864>`);
         } else {
             const lastMember = offlineMembers[offlineMembers.length - 1];
             offlineMembers.length = offlineMembers.length - 1;
@@ -153,14 +157,14 @@ client.on ('message', message => {
                 offlineMembers = offlineMembers.join(', ');
                 offlineMembers = offlineMembers + ', and ' + lastMember;
             }
-            message.channel.send(`${offlineMembers} are absent <:FeelsBadMan:794744572718481408>`);
+            message.channel.send(`${offlineMembers} are absent <:FeelsBadMan:794744572718481408> <:prideFlag:857496510203428864>`);
         }
         break;
 
     case 'troll':
         message.delete();
         if (args.length < 1) {
-            return message.channel.send('No one to troll <:FeelsBadMan:794744572718481408>');
+            return message.channel.send('No one to troll <:FeelsBadMan:794744572718481408> <:prideFlag:857496510203428864>');
         } else {
             fullMessage = '';
                 args.forEach(element => {
@@ -170,22 +174,22 @@ client.on ('message', message => {
                     fullMessage = fullMessage + element + ' ';
                 });
             for (let i = 0; i < 25; i++) {
-                message.channel.send(fullMessage);
+                message.channel.send(`${fullMessage} <:prideFlag:857496510203428864>`);
             }
         }
         break;
 
     case 'gamble':
         // eslint-disable-next-line no-unused-vars
-        message.channel.send('I am thinking of a number between 1 and 10.  What is the number?').then(_nil => {
+        message.channel.send('I am thinking of a number between 1 and 10.  What is the number? <:prideFlag:857496510203428864>').then(_nil => {
         const gambleNumber = Math.round(Math.random() * 10);
                 client.once('message', guessMessage => {
                     const guess = Math.round(parseInt(guessMessage.content));
                     if (guess > 1 && guess < 11) {
                         if (guess === gambleNumber) {
-                            message.channel.send('Correct! <:HYPERS:794746882760769618>');
+                            message.channel.send('Correct! <:HYPERS:794746882760769618> <:prideFlag:857496510203428864>');
                         } else {
-                            message.channel.send(`Incorrect. <:FeelsBadMan:794744572718481408>  The number was ${gambleNumber}.`);
+                            message.channel.send(`Incorrect. <:FeelsBadMan:794744572718481408>  The number was ${gambleNumber}. <:prideFlag:857496510203428864>`);
                         }
                     }
                 });
@@ -196,15 +200,15 @@ client.on ('message', message => {
         const flipNumber = Math.round(Math.random());
         console.log(flipNumber);
         if (flipNumber === 1) {
-            message.channel.send('Heads!');
+            message.channel.send('Heads! <:prideFlag:857496510203428864>');
         } else {
-            message.channel.send('Tails!');
+            message.channel.send('Tails! <:prideFlag:857496510203428864>');
         }
         break;
 
     case 'jamtime':
             reactedUsers = [];
-            message.channel.send('@everyone jam time?  <:FeelsOkayMan:785613008247193660>').then(sent => {
+            message.channel.send('@everyone jam time?  <:FeelsOkayMan:785613008247193660> <:prideFlag:857496510203428864>').then(sent => {
                 sent.react('✅')
                     .then(() => {
                         sent.react('❌');
@@ -215,7 +219,7 @@ client.on ('message', message => {
                         collectorX.on('collect', (reaction, user) => {
                             if (!reactedUsers.includes(user)) {
                                 reactedUsers.push(user);
-                                message.channel.send(`${(message.guild.members.cache.get(user.id)).nickname} absent jammer <:Sadge:804521949794795601>`);
+                                message.channel.send(`${(message.guild.members.cache.get(user.id)).nickname} absent jammer <:Sadge:804521949794795601> <:prideFlag:857496510203428864>`);
                             }
                         });
                         const filterY = (reaction, user) => {
@@ -225,7 +229,7 @@ client.on ('message', message => {
                         collectorY.on('collect', (reaction, user) => {
                             if (!reactedUsers.includes(user)) {
                                 reactedUsers.push(user);
-                                message.channel.send(`${(message.guild.members.cache.get(user.id).nickname)} present jammer <:FeelsOkayMan:785613008247193660>`);
+                                message.channel.send(`${(message.guild.members.cache.get(user.id).nickname)} present jammer <:FeelsOkayMan:785613008247193660> <:prideFlag:857496510203428864>`);
                             }
                         });
                     });
@@ -233,8 +237,9 @@ client.on ('message', message => {
             break;
 
         case 'rate':
-            if (args[0] == `<@!${message.author.id}>`) return message.channel.send('Invalid user - Rule 10 <:FeelsWeirdMan:792656734409195542>');
-            if (args[1] < 1 || args[1] > 10) return message.channel.send('Invalid rating <:FeelsWeirdMan:792656734409195542>');
+            // if (args[0] == `<@!${message.author.id}>`) return message.channel.send('Invalid user - Rule 10 <:FeelsWeirdMan:792656734409195542>');
+            if (args[1] < 1 || args[1] > 10) return message.channel.send('Invalid rating <:FeelsWeirdMan:792656734409195542> <:prideFlag:857496510203428864>');
+            if (!args[1]) return message.channel.send('Missing Parameters <:FeelsWeirdMan:792656734409195542> <:prideFlag:857496510203428864>');
             switch (args[0]) {
                 case '<@!356642729394044932>':
                     args[0] = 'B2:D2';
@@ -299,8 +304,8 @@ client.on ('message', message => {
         break;
 
         case 'test':
-            message.channel.send('no tests today <:pepePOG:796983161249988648>');
-        break;
+            message.channel.send('no tests today <:pepePOG:796983161249988648> <:prideFlag:857496510203428864>');
+            break;
 	}
 });
 
@@ -346,13 +351,13 @@ function getTotalScore(auth, message) {
         range: 'A2:E4',
     }, (err, res) => {
         if (err) {
-            message.channel.send('Failed to get scores <:FeelsDankMan:794744902172540968>');
+            message.channel.send('Failed to get scores <:FeelsDankMan:794744902172540968> <:prideFlag:857496510203428864>');
             return console.log(`The API returned an error: ${err}`);
         }
         const rows = res.data.values;
         if (rows.length && message) {
             rows.map((row) => {
-                message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]}`);
+                message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]} <:prideFlag:857496510203428864>`);
             });
         } else {
             console.log('No data found.');
@@ -370,9 +375,10 @@ async function getSpecificScore(auth, range) {
             if (err) {
                 resolve(false);
                 return console.log(`The API returned an error: ${err}`);
+            } else {
+                const rows = res.data.values;
+                resolve(rows);
             }
-            const rows = res.data.values;
-            resolve(rows);
         });
     });
     return await promise;
@@ -385,12 +391,12 @@ function getIndividualScore(auth, range, message) {
         range: range,
     }, (err, res) => {
         if (err) {
-            message.channel.send('Failed to get scores <:FeelsDankMan:794744902172540968>');
+            message.channel.send('Failed to get scores <:FeelsDankMan:794744902172540968> <:prideFlag:857496510203428864>');
             return console.log(`The API returned an error: ${err}`);
         }
         const row = res.data.values[0];
         if (row.length && message) {
-            message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]}`);
+            message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]} <:prideFlag:857496510203428864>`);
         } else {
             console.log('No data found.');
         }
@@ -399,7 +405,7 @@ function getIndividualScore(auth, range, message) {
 
 async function setScore(auth, range, value, message) {
     const previousValues = await getSpecificScore(authCode, range);
-    if (!previousValues) return message.channel.send('Failed to add score.');
+    if (!previousValues) return message.channel.send('Failed to add score. <:prideFlag:857496510203428864>');
     value = parseInt(value);
     const previousScore = parseInt(previousValues[0][0]);
     const previousNumber = parseInt(previousValues[0][1]);
@@ -420,10 +426,10 @@ async function setScore(auth, range, value, message) {
     };
     try {
         (sheets.spreadsheets.values.update(request)).data;
-        message.channel.send(`Score of ${value} successfully added to ${message.mentions.users.first()}.`);
+        message.channel.send(`Score of ${value} successfully added to ${message.mentions.users.first()}. <:prideFlag:857496510203428864>`);
     } catch (err) {
-        message.channel.send('Failed to add score.');
-        console.log(err);
+        message.channel.send('Failed to add score. <:prideFlag:857496510203428864>');
+        console.log(`${err}`);
     }
 }
 
