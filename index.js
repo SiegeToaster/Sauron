@@ -8,11 +8,11 @@ const { google } = require('googleapis');
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const TOKEN_PATH = 'token.json';
 const { SpreadsheetId } = require('./private.json');
+let authCode = '';
 fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     authorize(JSON.parse(content));
 });
-let authCode = '';
 let reactedUsers = [`
 > ⠀⠀⠉⠛⠛⠻⢿⣿⣿⣿⣿⣿⣿⣶⣶⣶⣶⣶⣶⣶⣶⣦⣤⣄⡀⠀⠀⠀⠀⠀
 > ⠀⠀⠀⠀⠀⠀⠚⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀
@@ -30,11 +30,16 @@ let reactedUsers = [`
 > ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀
 > ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠺⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁
 `];
+let pingVar = 'false';
+let prideVar = 'false';
+let virginVar = 'false';
+let susVar = 'false';
 
 client.once('ready', () => {
     console.log('');
     console.log('Sauron is now online.');
     client.user.setStatus("online");
+    updateSettings(authCode);
 });
 
 const { prefix } = require('./config.json');
@@ -74,15 +79,19 @@ client.on ('message', message => {
         message.channel.bulkDelete(2);
         console.log('Delete That!! activated.');
     }
-    if (message.content.toLowerCase().includes('sus')) {
+    if (susVar === 'true' && message.content.toLowerCase().includes('sus')) {
         message.channel.send('https://www.youtube.com/watch?v=0bZ0hkiIKt0');
     }
     if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png')) {
         message.delete();
     }
-    if (message.mentions.users.first()) {
+    if (pingVar === 'true' && message.mentions.users.first()) {
         message.channel.send('https://i.imgur.com/lqw97AX.jpg');
     }
+    if (virginVar === 'true' && !message.author.bot) {
+        message.channel.send('https://cdn.discordapp.com/attachments/761347053983891499/858791752601042974/evening_gentlemen.png');
+    }
+
     if (!message.content.startsWith(prefix)) return;
     // const guild = client.guilds.cache.get('761347053983891496');
     console.log(' ');
@@ -264,11 +273,34 @@ client.on ('message', message => {
                     getIndividualScore(authCode, element, message);
                 });
             }
-            break;
+        break;
+
+        case 'updatesettings':
+            updateSettings(authCode);
+        break;
+
+        case 'set':
+            if (args[0] !== 'ping' && args[0] !== 'pride' && args[0] !== 'virgin') return message.channel.send(`${args[0]} is not a setting.`);
+            if (args[1] !== 'true' && args[1] !== 'false') return message.channel.send(`${args[1]} is an invalid setting for ${args[0]}`);
+            switch (args[0]) {
+                case 'ping': args[0] = 'Settings!A2';
+                break;
+
+                case 'pride': args[0] = 'Settings!B2';
+                break;
+
+                case 'virgin': args[0] = 'Settings!C2';
+                break;
+
+                case 'sus': args[0] = 'Settings!D2';
+                break;
+            }
+            setSpecificSetting(authCode, args[0], args[1], message);
+        break;
 
         case 'test':
             message.channel.send('no tests today <:pepePOG:796983161249988648>');
-            break;
+        break;
 	}
 });
 
@@ -315,7 +347,7 @@ function getTotalScore(auth, message) {
     }, (err, res) => {
         if (err) {
             message.channel.send('Failed to get scores <:FeelsDankMan:794744902172540968>');
-            console.log(`The API returned an error: ${err}`);
+            return console.log(`The API returned an error: ${err}`);
         }
         const rows = res.data.values;
         if (rows.length && message) {
@@ -367,9 +399,7 @@ function getIndividualScore(auth, range, message) {
 
 async function setScore(auth, range, value, message) {
     const previousValues = await getSpecificScore(authCode, range);
-    if (!previousValues) {
-        message.channel.send('Failed to add score.');
-    }
+    if (!previousValues) return message.channel.send('Failed to add score.');
     value = parseInt(value);
     const previousScore = parseInt(previousValues[0][0]);
     const previousNumber = parseInt(previousValues[0][1]);
@@ -393,10 +423,59 @@ async function setScore(auth, range, value, message) {
         message.channel.send(`Score of ${value} successfully added to ${message.mentions.users.first()}.`);
     } catch (err) {
         message.channel.send('Failed to add score.');
-        console.log(`${err}`);
+        console.log(err);
     }
 }
 
+async function updateSettings(auth) {
+    pingVar = await getSpecificSetting(auth, 'Settings!A2');
+    prideVar = await getSpecificSetting(auth, 'Settings!B2');
+    virginVar = await getSpecificSetting(auth, 'Settings!C2');
+    susVar = await getSpecificSetting(auth, 'Settings!D2');
+}
+
+async function getSpecificSetting(auth, range) {
+    const promise = new Promise((resolve) => {
+        const sheets = google.sheets({ version: 'v4', auth });
+        sheets.spreadsheets.values.get({
+            spreadsheetId: SpreadsheetId,
+            range: range,
+        }, (err, res) => {
+            if (err) {
+                resolve(false);
+                return console.log(`Error: ${err}`);
+            }
+            resolve(res.data.values[0][0]);
+        });
+    });
+    return await promise;
+}
+
+async function setSpecificSetting(auth, range, value, message) {
+    const sheets = google.sheets({ version: 'v4', auth });
+    const previousValue = await getSpecificSetting(auth, range);
+    if (!previousValue) return message.channel.send('Failed to update setting.');
+    if (value === previousValue) return message.channel.send(`Setting is already ${value}`);
+
+    const request = {
+        spreadsheetId: SpreadsheetId,
+        range: range,
+        valueInputOption: 'RAW',
+        resource: {
+            "range": range,
+            "values": [[value]],
+        },
+        auth: auth,
+    };
+    try {
+        (sheets.spreadsheets.values.update(request)).data;
+        message.channel.send(`Successfully updated setting to ${value}`);
+    } catch (err) {
+        message.channel.send('Failed to update setting.');
+        console.log(err);
+    }
+    setTimeout(function() { updateSettings(authCode); }, 1000);
+}
 
 function getOfflineMembers(subjects, message) {
     const membersToReturn = [];
