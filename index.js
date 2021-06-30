@@ -92,7 +92,7 @@ client.on ('message', message => {
         message.channel.bulkDelete(2);
         console.log('Delete That!! activated.');
     }
-    if (message.content.match(/(\*$)|(\*)+(you're)/gm)) {
+    if (message.content.match(/you're(\*$)|(^\*)you're/gmi)) {
         let correctionIndex = Math.floor(Math.random() * correctionGifs.length);
         while (correctionIndex == lastCorrectionIndex) {
             correctionIndex = Math.floor(Math.random() * correctionGifs.length);
@@ -100,9 +100,8 @@ client.on ('message', message => {
         lastCorrectionIndex = correctionIndex;
         message.channel.send(correctionGifs[correctionIndex] + prideFlag);
     }
-    if (susVar === 'true' && message.content.toLowerCase().includes('sus')) {
-        message.channel.send(`https://www.youtube.com/watch?v=0bZ0hkiIKt0 ${prideFlag}`);
-    }
+    if (message.content.toLowerCase().includes('female')) message.channel.send('girl*');
+    if (susVar === 'true' && message.content.toLowerCase().includes('sus')) message.channel.send(`https://www.youtube.com/watch?v=0bZ0hkiIKt0 ${prideFlag}`);
     if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png')) {
         message.delete();
     }
