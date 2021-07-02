@@ -92,7 +92,7 @@ client.on ('message', message => {
         message.channel.bulkDelete(2);
         console.log('Delete That!! activated.');
     }
-    if (message.content.match(/you're(\*$)|(^\*)you're/gmi)) {
+    if ((message.content.match(/you're(\*$)|(^\*)you're/gmi) || message.content.includes('youre')) && !message.author.bot) {
         let correctionIndex = Math.floor(Math.random() * correctionGifs.length);
         while (correctionIndex == lastCorrectionIndex) {
             correctionIndex = Math.floor(Math.random() * correctionGifs.length);
