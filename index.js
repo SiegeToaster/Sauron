@@ -19,6 +19,19 @@ let reactedUsers = [`
 > ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀
 > ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠺⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁
 `];
+const correctionGifs = [
+    'https://images-ext-2.discordapp.net/external/x_dsYvJXnDZ-He2xSj1d2UjqFzouYJLzn6qk_mff4fg/https/media.discordapp.net/attachments/728319830108667989/858313721507348480/image0.gif',
+    'https://tenor.com/view/bbc-two-bbc-two-peaky-blinders-gif-20722169',
+    'https://tenor.com/view/your-youre-gif-19011295',
+    'https://tenor.com/view/youre-your-spies-spies-in-disguise-youre-spies-gif-20405819',
+    'https://tenor.com/view/youre-gif-18693005',
+];
+let lastCorrectionIndex = 0;
+let pingVar = 'false';
+let prideVar = 'false';
+let prideFlag = '';
+let virginVar = 'false';
+let susVar = 'false';
 
 const mysql = require('mysql');
 const { SQLPassword } = require('./private.json');
@@ -31,16 +44,14 @@ const connection = mysql.createConnection({
 connection.connect(function(err) {
     if (err) throw err;
     console.log('Connected to SQL server.');
-    connection.query("SELECT * FROM scores", function(err, result, fields) {
-        if (err) throw err;
-        console.log(result);
-    });
 });
 
 client.once('ready', () => {
     console.log('');
     console.log('Sauron is now online.');
     client.user.setStatus("online");
+    // ToDo: configure updateSettings
+    // updateSettings();
 });
 
 const { prefix } = require('./config.json');
@@ -59,14 +70,15 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Ben10', value: 'Sends the text you put after the command and a picture of a guy with his hand out.' },
         { name: 'Delete', value: 'Sends a picture of Pepe holding a sign that says "Delete That!!"' },
         { name: 'Joe', value: 'mama' },
-        { name: 'Ligma', value: 'balls' },
         { name: 'Absent', value: 'Checks is people are offline.  If people are pinged after command, it only checks those, otherwise, it checks everyone.' },
         { name: 'Troll', value: 'Sends the message declared after the command 25 times.' },
-        { name: 'Gamble', value: 'Guessing game for numbers between 1 and 10.' },
+        { name: 'Gamble', value: 'Guessing game for numbers between 1 and 10.  OPTIONAL: Add a number after command to automatically get answer.' },
         { name: 'Coinflip', value: 'Flips a coin, lands on heads or tails.' },
         { name: 'Jamtime', value: 'Pings everyone asking for jamtime and adds yes/no reactions.\n\nIf someone reacts yes, they get present jammer <:FeelsOkayMan:785613008247193660>.\nIf someone reacts no, they get absent jammer <:Sadge:804521949794795601>.' },
         { name: 'Rate', value: 'Sets the score in the database.  After the command, a user must be mentioned followed by a number (the score).  Example:\n?rate `@Willius Dominus` 10' },
         { name: 'Getscore', value: 'Gets the score for everyone in the database.  Optional: add mention(s) after the command to get their score only.  Example:\n?getscore\n?getScore `@Willius Dominus` `@Bennamus Jullius`' },
+        { name: 'UpdateSettings', value: 'Re-fetches settings from database.  No return' },
+        { name: 'Set', value: 'Changes settings.  After the command, a setting must be named followed by "true" or "false".  Valid settings are: "ping", "pride", "virgin", and "sus".  Example:\n?set ping true' },
     )
     .setFooter('ligma');
 let fullMessage = '';
@@ -81,14 +93,23 @@ client.on ('message', message => {
         message.channel.bulkDelete(2);
         console.log('Delete That!! activated.');
     }
-    if (message.content.toLowerCase().includes('sus')) {
-        message.channel.send('https://www.youtube.com/watch?v=0bZ0hkiIKt0');
+    if ((message.content.match(/you're(\*$)|(^\*)you're/gmi) || message.content.includes('youre')) && !message.author.bot) {
+        let correctionIndex = Math.floor(Math.random() * correctionGifs.length);
+        while (correctionIndex == lastCorrectionIndex) {
+            correctionIndex = Math.floor(Math.random() * correctionGifs.length);
+        }
+        lastCorrectionIndex = correctionIndex;
+        message.channel.send(correctionGifs[correctionIndex] + prideFlag);
     }
-    if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png') || message.content.includes('didnt ask willius anything')) {
+    if (message.content.toLowerCase().includes('female')) message.channel.send('girl*');
+    if (susVar === 'true' && message.content.toLowerCase().includes('sus')) message.channel.send(`https://www.youtube.com/watch?v=0bZ0hkiIKt0 ${prideFlag}`);
+    if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png') || message.content.includes('didnt ask willius anything')) message.delete();
+    if (pingVar === 'true' && message.mentions.users.first()) message.channel.send(`https://i.imgur.com/lqw97AX.jpg ${prideFlag}`);
+    if (virginVar === 'true' && !message.author.bot) message.channel.send(`https://cdn.discordapp.com/attachments/761347053983891499/858791752601042974/evening_gentlemen.png ${prideFlag}`);
+    if (prideVar === 'true' && !message.content.endsWith('🏳️‍🌈')) {
+        console.log('pride');
         message.delete();
-    }
-    if (message.mentions.users.first() || message.content.includes('@everyone') || message.content.includes('@here')) {
-        message.channel.send('https://i.imgur.com/lqw97AX.jpg');
+        message.channel.send('Your message has been deleted for not having :rainbow_flag: at the end.  Happy Pride Month!\n:rainbow_flag:\n:rainbow_flag:\n:rainbow_flag:\n:rainbow_flag:\n🏳️‍🌈');
     }
     if (!message.content.startsWith(prefix)) return;
     // const guild = client.guilds.cache.get('761347053983891496');
@@ -134,6 +155,13 @@ client.on ('message', message => {
 
     case 'joe':
         message.channel.send('joe mama');
+    break;
+
+    case 'forgot':
+        // eslint-disable-next-line no-unused-vars
+        message.channel.send(`<:FeelsNotSureMan:841539607664918558> ${prideFlag}`).then(_nil => {
+            message.channel.send(`I forgot ${prideFlag}`);
+        });
     break;
 
 	case 'absent':
@@ -231,15 +259,31 @@ client.on ('message', message => {
         break;
 
         case 'getscore':
-            connection.query("SELECT * FROM scores", function(err, result, fields) {
-                if (err) return console.log(err);
-                if (result) {
-                    message.channel.send(result[0].userID);
-                } else {
-                    console.log(result);
-                    message.channel.send(';ailed to get scores <:FeelsBadMan:794744572718481408>');
-                }
-            });
+            getSpecificScore(message, 356642729394044932);
+        break;
+
+        case 'updatesettings':
+            console.log('no.');
+            // updateSettings();
+        break;
+
+        case 'set':
+            if (args[0] !== 'ping' && args[0] !== 'pride' && args[0] !== 'virgin' && args[0] !== 'sus') return message.channel.send(`${args[0]} is not a setting. ${prideFlag}`);
+            if (args[1] !== 'true' && args[1] !== 'false') return message.channel.send(`${args[1]} is an invalid setting for ${args[0]} ${prideFlag}`);
+            switch (args[0]) {
+                case 'ping': args[0] = 'Settings!A2';
+                break;
+
+                case 'pride': args[0] = 'Settings!B2';
+                break;
+
+                case 'virgin': args[0] = 'Settings!C2';
+                break;
+
+                case 'sus': args[0] = 'Settings!D2';
+                break;
+            }
+            // setSpecificSetting(authCode, args[0], args[1], message);
         break;
 
         case 'rate':
@@ -265,6 +309,84 @@ client.on ('message', message => {
 });
 
 // =====Functions===== \\
+async function getSpecificScore(message, userID) {
+    const userData = await connection.query(`SELECT * FROM scores`, function(err, result) {
+        if (err) {
+            console.log(`mySQL index.js:325 - ${err}`);
+            return false;
+        }
+        if (result) {
+            console.log(result);
+            return result;
+        } else {
+            console.log('else 322');
+            return false;
+        }
+    });
+    await userData;
+    // if (userData === false) {message.channel.send(`Failed to get score for ${(message.guild.members.cache.get(userID).nickname)}`);} else {
+        // message.channel.send(`${message} - Total Score: ${userData[0].totalScore}, Number of Ratings: ${userData[0].amountOfRatings}, Highest Rating: ${userData[0].highestRating}, Average Rating: ${userData[0].averageRating}.  ${prideFlag}`);
+    // }
+
+}
+/*
+async function updateSettings(auth) {
+    pingVar = await getSpecificSetting(auth, 'Settings!A2');
+    prideVar = await getSpecificSetting(auth, 'Settings!B2');
+    if (prideVar === 'true') {
+        prideFlag = '🏳️‍🌈';
+    } else {
+        prideFlag = '';
+    }
+    virginVar = await getSpecificSetting(auth, 'Settings!C2');
+    susVar = await getSpecificSetting(auth, 'Settings!D2');
+
+    console.log('Settings Updated.');
+}
+
+async function getSpecificSetting(auth, range) {
+    const promise = new Promise((resolve) => {
+        const sheets = google.sheets({ version: 'v4', auth });
+        sheets.spreadsheets.values.get({
+            spreadsheetId: SpreadsheetId,
+            range: range,
+        }, (err, res) lol=> {
+            if (err) {
+                resolve(false);
+                return console.log(`Error: ${err}`);
+            }
+            resolve(res.data.values[0][0]);
+        });
+    });
+    return await promise;
+}
+
+async function setSpecificSetting(auth, range, value, message) {
+    const sheets = google.sheets({ version: 'v4', auth });
+    const previousValue = await getSpecificSetting(auth, range);
+    if (!previousValue) return message.channel.send(`Failed to update setting. ${prideFlag}`);
+    if (value === previousValue) return message.channel.send(`Setting is already ${value} ${prideFlag}`);
+
+    const request = {
+        spreadsheetId: SpreadsheetId,
+        range: range,
+        valueInputOption: 'RAW',
+        resource: {
+            "range": range,
+            "values": [[value]],
+        },
+        auth: auth,
+    };
+    try {
+        (sheets.spreadsheets.values.update(request)).data;
+        message.channel.send(`Successfully updated setting to ${value} ${prideFlag}`);
+    } catch (err) {
+        message.channel.send(`Failed to update setting. ${prideFlag}`);
+        console.log(err);
+    }
+    setTimeout(function() { updateSettings(authCode); }, 1000);
+}
+*/
 function getOfflineMembers(subjects, message) {
     const membersToReturn = [];
     if (!subjects.length) {
@@ -275,45 +397,4 @@ function getOfflineMembers(subjects, message) {
         if(tempPresence == 'offline' || tempPresence == 'idle') membersToReturn.push(element.nickname);
     });
     return membersToReturn;
-}
-
-async function getSpecificScore(userID) {
-    let totalScore = await connection.query(`SELECT totalScore FROM scores WHERE userID = ${userID}`, function(err, result) {
-        if (err) console.log(err); message.channel.send('Failed to set score <:FeelsBadMan:794744572718481408>'); return false;
-        if (result) {
-            // console.log(result);
-            return result;
-        } else {
-            return false;
-        }
-    });
-    console.log(totalScore);
-    let amountOfRatings = await connection.query(`SELECT amountOfRatings FROM scores WHERE userID = ${userID}`, function(err, result) {
-        if (err) console.log(err); message.channel.send('Failed to set score <:FeelsBadMan:794744572718481408>'); return false;
-        if (result) {
-            return result;
-        } else {
-            return false;
-        }
-    });
-    console.log(amountOfRatings);
-    let highestRating = await connection.query(`SELECT highestRating FROM scores WHERE userID = ${userID}`, function(err, result) {
-        if (err) console.log(err); message.channel.send('Failed to set score <:FeelsBadMan:794744572718481408>'); return false;
-        if (result) {
-            return result;
-        } else {
-            return false;
-        }
-    });
-    console.log(highestRating);
-    let averageRating = await connection.query(`SELECT averageRating FROM scores WHERE userID = ${userID}`, function(err, result) {
-        if (err) console.log(err); message.channel.send('Failed to set score <:FeelsBadMan:794744572718481408>'); return false;
-        if (result) {
-            return result;
-        } else {
-            return false;
-        }
-    });
-    console.log(averageRating);
-    return [totalScore, amountOfRatings, highestRating, averageRating];
 }
