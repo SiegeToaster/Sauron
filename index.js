@@ -104,7 +104,9 @@ client.on ('message', message => {
         lastCorrectionIndex = correctionIndex;
         message.channel.send(correctionGifs[correctionIndex] + prideFlag);
     }
-    if (message.content.toLowerCase().includes('fuck') || message.content.toLowerCase().includes('shit') || message.content.toLowerCase().includes('retard')) setSwearCount(message);
+    if (message.content.toLowerCase().includes('fuck') && !message.author.bot) setSwearCount(message, 'f');
+    if (message.content.toLowerCase().includes('shit') && !message.author.bot) setSwearCount(message, 's');
+    if (message.content.toLowerCase().includes('retard') && !message.author.bot) setSwearCount(message, 'r');
     if (message.content.toLowerCase().includes('female') && !message.content.toLowerCase().includes(`${prefix}ben10`)) message.channel.send('girl*');
     if (susVar === 'true' && message.content.toLowerCase().includes('sus') && !message.content.match(/<:Susge:[0-9]+>/gm)) message.channel.send(`https://www.youtube.com/watch?v=0bZ0hkiIKt0 ${prideFlag}`);
     if (message.content.includes('https://cdn.discordapp.com/attachments/831202194673107005/849052330560323644/evening_gentlemen.png') || message.content.includes('didnt ask willius anything')) message.delete();
@@ -507,27 +509,29 @@ function getOfflineMembers(subjects, message) {
 async function getSwearCount(message, ID) {
     console.log(ID);
     const promise = new Promise((resolve) => {
-        connection.query(`SELECT numberOfWords FROM swearwords WHERE userID = ${ID}`, function(err, result) {
+        connection.query(`SELECT * FROM swearwords WHERE userID = ${ID}`, function(err, result) {
             if (err) {
                 resolve('false');
                 return console.error(`Error: getSwearCount fetch error - ${err}`);
             }
             if (result) {
-                resolve(result[0].numberOfWords);
+                resolve(result[0]);
             } else {
                 resolve('false');
                 return console.error(`Error: getSpecificSetting fetch error - nil result`);
             }
         });
     });
-    if (message) message.channel.send(`${message.guild.members.cache.get(ID).nickname} - Number of Swear Words: ${await promise}`);
+    const values = await promise;
+    console.log(values.numberOfWords);
+    if (message) message.channel.send(`${message.guild.members.cache.get(ID).nickname} - Number of Swear Words: ${values.numberOfWords}, Fuck Words: ${values.fNumber}, Shit Words: ${values.sNumber}, Retard Words: ${values.rNumber}`);
     return await promise;
 }
 
-async function setSwearCount(message) {
+async function setSwearCount(message, word) {
     const previousValue = await getSwearCount(false, message.author.id);
     if (previousValue == null) return message.channel.send(`Failed to log swear word. ${prideFlag}`);
-    connection.query(`UPDATE swearwords SET numberOfWords = ${previousValue} + 1 WHERE userID = ${message.author.id}`, function(err, result) {
+    connection.query(`UPDATE swearwords SET numberOfWords = ${previousValue.numberOfWords} + 1, ${word}Number = ${previousValue[`${word}Number`]} + 1 WHERE userID = ${message.author.id}`, function(err, result) {
         if (err) {
             message.channel.send(`Failed to log swear word. ${prideFlag}`);
             return console.error(`Error: setSpecificSetting error - ${err}`);
