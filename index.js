@@ -507,7 +507,6 @@ function getOfflineMembers(subjects, message) {
 }
 
 async function getSwearCount(message, ID) {
-    console.log(ID);
     const promise = new Promise((resolve) => {
         connection.query(`SELECT * FROM swearwords WHERE userID = ${ID}`, function(err, result) {
             if (err) {
@@ -523,7 +522,6 @@ async function getSwearCount(message, ID) {
         });
     });
     const values = await promise;
-    console.log(values.numberOfWords);
     if (message) message.channel.send(`${message.guild.members.cache.get(ID).nickname} - Number of Swear Words: ${values.numberOfWords}, Fuck Words: ${values.fNumber}, Shit Words: ${values.sNumber}, Retard Words: ${values.rNumber}`);
     return await promise;
 }
