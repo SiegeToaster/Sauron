@@ -6,7 +6,7 @@ const client = new Discord.Client();
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/documents'];
 const TOKEN_PATH = 'token.json';
 const { SpreadsheetId } = require('./private.json');
 let authCode = '';
@@ -337,7 +337,8 @@ client.on ('message', message => {
         break;
 
         case 'test':
-            message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
+            // message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
+            getSheeshiusVerse(authCode, message, args[0]);
             break;
 	}
 });
@@ -534,3 +535,44 @@ function getOfflineMembers(subjects, message) {
     });
     return membersToReturn;
 }
+
+function getSheeshiusVerse(auth, message, line) {
+    const docs = google.docs({ version: 'v1', auth });
+    docs.documents.get({
+        documentId: '1zGaKNYfLUeq7W0OdnFNzM3UkqohNB-waEtPg1vfLcQc',
+    }, (err, res) => {
+        if (err) {
+            message.channel.send(`Failed to get Sheeshius verse ${prideFlag}`);
+            return console.log('Error: getSheeshiusVerse google API error - ' + err);
+        }
+        if (!line) {
+            const sheeshiusEmbed = new Discord.MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle('The Holy Book of Sheeshius')
+                .setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
+                .setDescription('All entries of The Holy Book of Sheeshius "sus" Maximus.');
+            let documentData = res.data.body.content;
+            documentData.splice(0, 12);
+            res.data.body.content.forEach(element => {
+                try {
+                    let embedContent = `${element.paragraph.elements[0].textRun.content}`;
+                    console.log(embedContent);
+                    embedContent = embedContent.split(/\n+/)[0];
+                    // if (embedContent.includes('Chapter')) {
+                        // embedContent = '\n' + embedContent;
+                    // }
+                    console.log(embedContent);
+                    if (embedContent != '\n') {
+                        sheeshiusEmbed.addField('\u200B', `${embedContent}`);
+                    }
+                } catch (error) {
+                    console.log(`no element: error`);
+                }
+                // console.log(element.paragraph.elements[0].textRun.content);
+            });
+        message.channel.send(sheeshiusEmbed);
+        } else {
+            message.channel.send(`WHEEEEEEEE <:HYPERS:794746882760769618>`);
+        }
+    });
+  }
