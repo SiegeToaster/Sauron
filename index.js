@@ -44,7 +44,7 @@ const connection = mysql.createConnection({
 	database: 'sauronscores',
 });
 connection.connect(function(err) {
-    if (err) throw err;
+    if (err) return console.error(err);
     console.log('Connected to SQL server.');
     updateSettings();
 });
@@ -329,10 +329,6 @@ client.on ('message', message => {
                     getSpecificScore(message, element.id);
                 });
             }
-        break;
-
-        case 'updatesettings':
-            updateSettings();
         break;
 
         case 'set':

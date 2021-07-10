@@ -5,9 +5,14 @@ crappy Discord bot
 Requires a mySQL server
 use the following commands to setup the proper database, tables, and columns:
 ```
-CREATE DATABASE IF NOT EXISTS sauronScores;
-USE sauronScores;
-CREATE TABLE scores (userID BIGINT, totalScore BIGINT, amountOfRatings BIGINT, highestRating TINYINT, averageRating TINYINT);
+-- Database and table creation
+CREATE SCHEMA IF NOT EXISTS sauronscores;
+USE sauronscores;
+CREATE TABLE IF NOT EXISTS scores (userID CHAR(18), totalScore BIGINT, amountOfRatings BIGINT, highestRating TINYINT, averageRating TINYINT);
+CREATE TABLE IF NOT EXISTS settings (ping TINYINT, pride TINYINT, virgin TINYINT, sus TINYINT);
+CREATE TABLE IF NOT EXISTS swearwords (userID CHAR(18), numberOfWords BIGINT, fNumber BIGINT, sNumber BIGINT, rNumber BIGINT);
+-- add default setting values
+INSERT INTO settings (ping, pride, virgin, sus) VALUES (1, 0, 0, 1);
 ```
 
 Requires a file called 'private.json' for all private info.  This must include your discord bot token and SQL root account password.  An example private.json file is:
@@ -49,3 +54,9 @@ Requires a file called 'private.json' for all private info.  This must include y
     - Gets the score for everyone in the database.  Optional: add mention(s) after the command to get their score only.  Examples:
     - ?getscore
     - ?getScore `@Willius Dominus` `@Bennamus Jullius`
+- [x] set
+    - sets a setting (ping, pride, virgin, or sus) to true or false
+- [x] getswear
+    - works identically to getscore except it tells you the amount of time someone has said swear words.
+- [x] resetscores
+    - inititates a vote to reset all scores to 0.  Vote must be unanimous.
