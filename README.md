@@ -39,7 +39,7 @@ On the first launch, make sure to use a terminal that you can input data into as
 - [x] coinflip
     - Flips a coin, lands on heads or tails.
 - [x] jamtime
-    - pings everyone asking for jam time and adds reactions.  People who react :x: will be called out.
+    - pings everyone asking for jam time and adds reactions for yes or no.  sends a message whenever someone reacts telling who reacted what.
 - [x] rate
     - Sets the score in the database.  After the command, a user must be mentioned followed by a number (the score).  Example:
     - ?rate `@Willius Dominus` 10'
@@ -47,3 +47,29 @@ On the first launch, make sure to use a terminal that you can input data into as
     - Gets the score for everyone in the database.  Optional: add mention(s) after the command to get their score only.  Examples:
     - ?getscore
     - ?getScore `@Willius Dominus` `@Bennamus Jullius`
+- [x] set
+    - sets a setting (ping, pride, virgin, or sus) to true or false
+- [ ] sheeshius
+    - get a verse from The Holy Book of Sheeshius
+    - chapters/lines can be declared.  For example:
+    - ?sheeshius 1:1
+- [ ] sheeshiusadd
+    - add a verse to The Holy Book of Sheeshius
+    - need to define chapter.  For example:
+    - ?sheeshiusadd 1 super interesting verse here
+    - a vote is then created, must have the support of 1 other member before being added.
+    - might not add this
+- [ ] addplaylist
+    - adds a song to the database.  After the command, a song name and a link must be added.  Optionally, the artist name can be added Examples:
+    - ?addplaylist Hey Ya! https://www.youtube.com/watch?v=PWgvGjAhvIw
+    - ?addplaylist Blitzkrieg Bop https://www.youtube.com/watch?v=iymtpePP8I8 Ramones
+- [ ] getplaylist
+    - get a song from playlist
+    - without anything after command, returns a random song name and link
+    - with 'all' after command, returns all song names in playlist
+    - with a song name after command, returns song name and link of song (if it exists in the playlist)
+    - with an artist after command, returns all songs by artists (if it exists in the playlist)
+    - examples:
+        - ?getplaylist all
+        - ?getplaylist Hey Ya!
+        - ?getplaylist Ramones

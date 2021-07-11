@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-case-declarations */
 // =====SETUP=====\\
@@ -5,6 +6,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const fs = require('fs');
 const readline = require('readline');
+const { performance } = require('perf_hooks');
 const { google } = require('googleapis');
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/documents'];
 const TOKEN_PATH = 'token.json';
@@ -313,10 +315,6 @@ client.on ('message', message => {
             }
         break;
 
-        case 'updatesettings':
-            updateSettings(authCode);
-        break;
-
         case 'set':
             if (args[0] !== 'ping' && args[0] !== 'pride' && args[0] !== 'virgin' && args[0] !== 'sus') return message.channel.send(`${args[0]} is not a setting. ${prideFlag}`);
             if (args[1] !== 'true' && args[1] !== 'false') return message.channel.send(`${args[1]} is an invalid setting for ${args[0]} ${prideFlag}`);
@@ -337,8 +335,9 @@ client.on ('message', message => {
         break;
 
         case 'test':
+            const performance0 = performance.now();
             // message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
-            getSheeshiusVerse(authCode, message, args[0]);
+            getSheeshiusVerse(authCode, message, args[0], performance0);
             break;
 	}
 });
@@ -536,7 +535,7 @@ function getOfflineMembers(subjects, message) {
     return membersToReturn;
 }
 
-function getSheeshiusVerse(auth, message, line) {
+function getSheeshiusVerse(auth, message, line, performance0) { //! giga cluttered, must fix
     const docs = google.docs({ version: 'v1', auth });
     docs.documents.get({
         documentId: '1zGaKNYfLUeq7W0OdnFNzM3UkqohNB-waEtPg1vfLcQc',
@@ -550,29 +549,63 @@ function getSheeshiusVerse(auth, message, line) {
                 .setColor('#0099ff')
                 .setTitle('The Holy Book of Sheeshius')
                 .setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
-                .setDescription('All entries of The Holy Book of Sheeshius "sus" Maximus.');
+                .setDescription('All entries of The Holy Book of Sheeshius "sus" Maximus.')
+                .addField('\u200B', '\u200B');
+            // eslint-disable-next-line prefer-const
             let documentData = res.data.body.content;
             documentData.splice(0, 12);
-            res.data.body.content.forEach(element => {
+            // eslint-disable-next-line prefer-const
+            let sheeshiusEmbedContent = {};
+            documentData.forEach(element => {
                 try {
                     let embedContent = `${element.paragraph.elements[0].textRun.content}`;
-                    console.log(embedContent);
-                    embedContent = embedContent.split(/\n+/)[0];
-                    // if (embedContent.includes('Chapter')) {
-                        // embedContent = '\n' + embedContent;
-                    // }
-                    console.log(embedContent);
-                    if (embedContent != '\n') {
-                        sheeshiusEmbed.addField('\u200B', `${embedContent}`);
-                    }
+                    embedContent = embedContent.replace('\n', '');
+                    if (embedContent.includes('Chapter')) sheeshiusEmbedContent[embedContent.slice(-1)] = { name: `${embedContent}`, value: '' };
+                    if (embedContent != '\n' && !embedContent.includes('Chapter')) sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)] = { name: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].name}`, value: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].value}\n${embedContent}` };
                 } catch (error) {
-                    console.log(`no element: error`);
+                    // console.log(`no element: error`);
                 }
-                // console.log(element.paragraph.elements[0].textRun.content);
             });
-        message.channel.send(sheeshiusEmbed);
+
+            Object.values(sheeshiusEmbedContent).forEach(element => {
+                sheeshiusEmbed.addFields(element);
+            });
+            message.channel.send(sheeshiusEmbed);
         } else {
-            message.channel.send(`WHEEEEEEEE <:HYPERS:794746882760769618>`);
+            const sheeshiusEmbed = new Discord.MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle('The Holy Book of Sheeshius')
+                .setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
+                .setDescription('A chapter of The Holy Book of Sheeshius "sus" Maximus.');
+            // eslint-disable-next-line prefer-const
+            let documentData = res.data.body.content;
+            documentData.splice(0, 12);
+            // eslint-disable-next-line prefer-const
+            let sheeshiusEmbedContent = {};
+            documentData.forEach(element => {
+                try {
+                    let embedContent = `${element.paragraph.elements[0].textRun.content}`;
+                    embedContent = embedContent.replace('\n', '');
+                    if (embedContent.includes('Chapter')) sheeshiusEmbedContent[embedContent.slice(-1)] = { name: `${embedContent}`, value: '' };
+                    if (embedContent != '\n' && !embedContent.includes('Chapter')) sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)] = { name: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].name}`, value: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].value}\n${embedContent}` };
+                } catch (error) {
+                    // console.log(`no element: error`);
+                }
+            });
+
+            sheeshiusEmbed.addFields(sheeshiusEmbedContent[line]);
+            message.channel.send(sheeshiusEmbed);
         }
+        const performance1 = performance.now();
+        message.channel.send('Test took ' + (performance1 - performance0) + ' milliseconds.');
     });
-  }
+}
+
+function countObject(object) {
+    let count = 0;
+    for (const prop in object) {
+        if (object.hasOwnProperty(prop)) count = count + 1;
+    }
+
+    return count;
+}
