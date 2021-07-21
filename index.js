@@ -116,10 +116,10 @@ client.on ('message', message => {
     // const guild = client.guilds.cache.get('761347053983891496');
     console.log(' ');
 	// =====DEBUG=====\\
+	// console.log(`command: ${command}`);
 	// console.log(`args: ${args}`);
     // console.log(`1st element of args: ${args[0]}`);
     // console.log(`args size: ${args.length}`);
-	// console.log(`command: ${command}`);
 	// console.log(`guild: ${guild}`);
     console.log(`input: ${command} ${args}`);
     switch (command) {
@@ -335,9 +335,20 @@ client.on ('message', message => {
         break;
 
         case 'test':
-            const performance0 = performance.now();
             // message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
-            getSheeshiusVerse(authCode, message, args[0], performance0);
+            const performance0 = performance.now();
+            const chapterNumber = [];
+            chapterNumber.push(parseInt(args[0].split(':')[0]));
+            const lineNumbers = [];
+            args[0].split(':')[1].split('-').forEach(element => {
+                lineNumbers.push(element - 1);
+            });
+            console.log('Chapter Numbers:');
+            console.log(chapterNumber);
+            console.log('Line Numbers:');
+            console.log(lineNumbers);
+            console.log(' ');
+            getSheeshiusVerse(authCode, message, chapterNumber, lineNumbers, performance0);
             break;
 	}
 });
@@ -535,7 +546,7 @@ function getOfflineMembers(subjects, message) {
     return membersToReturn;
 }
 
-function getSheeshiusVerse(auth, message, line, performance0) { //! giga cluttered, must fix
+function getSheeshiusVerse(auth, message, chapters, lines, performance0) { //! giga cluttered, must fix
     const docs = google.docs({ version: 'v1', auth });
     docs.documents.get({
         documentId: '1zGaKNYfLUeq7W0OdnFNzM3UkqohNB-waEtPg1vfLcQc',
@@ -544,18 +555,21 @@ function getSheeshiusVerse(auth, message, line, performance0) { //! giga clutter
             message.channel.send(`Failed to get Sheeshius verse ${prideFlag}`);
             return console.log('Error: getSheeshiusVerse google API error - ' + err);
         }
-        if (!line) {
-            const sheeshiusEmbed = new Discord.MessageEmbed()
-                .setColor('#0099ff')
-                .setTitle('The Holy Book of Sheeshius')
-                .setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
+        const sheeshiusEmbed = new Discord.MessageEmbed()
+            .setColor('#0099ff')
+            .setTitle('The Holy Book of Sheeshius')
+            .setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png');
+        // eslint-disable-next-line prefer-const
+        let documentData = res.data.body.content;
+        documentData.splice(0, 12);
+        // eslint-disable-next-line prefer-const
+        let sheeshiusEmbedContent = {};
+        let currentChapter = 0;
+        let currentLine = 0;
+        if (!chapters) {
+            sheeshiusEmbed
                 .setDescription('All entries of The Holy Book of Sheeshius "sus" Maximus.')
                 .addField('\u200B', '\u200B');
-            // eslint-disable-next-line prefer-const
-            let documentData = res.data.body.content;
-            documentData.splice(0, 12);
-            // eslint-disable-next-line prefer-const
-            let sheeshiusEmbedContent = {};
             documentData.forEach(element => {
                 try {
                     let embedContent = `${element.paragraph.elements[0].textRun.content}`;
@@ -563,39 +577,53 @@ function getSheeshiusVerse(auth, message, line, performance0) { //! giga clutter
                     if (embedContent.includes('Chapter')) sheeshiusEmbedContent[embedContent.slice(-1)] = { name: `${embedContent}`, value: '' };
                     if (embedContent != '\n' && !embedContent.includes('Chapter')) sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)] = { name: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].name}`, value: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].value}\n${embedContent}` };
                 } catch (error) {
-                    // console.log(`no element: error`);
+                    // console.log(`sheeshiusEmbed construct error: no element`);
                 }
             });
-
-            Object.values(sheeshiusEmbedContent).forEach(element => {
-                sheeshiusEmbed.addFields(element);
-            });
-            message.channel.send(sheeshiusEmbed);
         } else {
-            const sheeshiusEmbed = new Discord.MessageEmbed()
-                .setColor('#0099ff')
-                .setTitle('The Holy Book of Sheeshius')
-                .setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
-                .setDescription('A chapter of The Holy Book of Sheeshius "sus" Maximus.');
-            // eslint-disable-next-line prefer-const
-            let documentData = res.data.body.content;
-            documentData.splice(0, 12);
-            // eslint-disable-next-line prefer-const
-            let sheeshiusEmbedContent = {};
+            sheeshiusEmbed.setDescription('A chapter of The Holy Book of Sheeshius "sus" Maximus.');
             documentData.forEach(element => {
                 try {
+                    if (!element.paragraph.elements[0].textRun.content || element.paragraph.elements[0].textRun.content == '\n') return;
                     let embedContent = `${element.paragraph.elements[0].textRun.content}`;
                     embedContent = embedContent.replace('\n', '');
-                    if (embedContent.includes('Chapter')) sheeshiusEmbedContent[embedContent.slice(-1)] = { name: `${embedContent}`, value: '' };
-                    if (embedContent != '\n' && !embedContent.includes('Chapter')) sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)] = { name: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].name}`, value: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].value}\n${embedContent}` };
-                } catch (error) {
-                    // console.log(`no element: error`);
+                    if (embedContent.includes('Chapter')) {
+                        console.log('chapter+');
+                        currentChapter++;
+                        currentLine = 0;
+                        if (currentChapter == chapters) {
+                            sheeshiusEmbedContent[embedContent.slice(-1)] = { name: `${embedContent}`, value: '' };
+                            console.log(`chapter added: ${embedContent}`);
+                        }
+                    }
+                    if (!embedContent.includes('Chapter')) {
+                        if (currentChapter == chapters && lines.includes(currentLine)) {
+                            sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)] = { name: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].name}`, value: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].value}\n${embedContent}` };
+                            console.log(`line added: ${embedContent}`);
+                        }
+                        console.log(`check line ${currentChapter}:${currentLine}`);
+                        console.log('line+');
+                        currentLine++;
+                        console.log('bruh');
+                    }
+                } catch {
+                    // console.log(`sheeshiusEmbed construct error: no element`);
                 }
             });
-
-            sheeshiusEmbed.addFields(sheeshiusEmbedContent[line]);
-            message.channel.send(sheeshiusEmbed);
+            for (let i = 1; i < (countObject(sheeshiusEmbedContent)); i++) {
+                console.log(`:A: ${i}`);
+                lines.forEach(element => {
+                    console.log(`:B: ${element}`);
+                    sheeshiusEmbedContent[i].value = sheeshiusEmbedContent[i].value.split('\n').splice(1)[element];
+                });
+            }
         }
+
+        Object.values(sheeshiusEmbedContent).forEach(element => {
+            sheeshiusEmbed.addFields(element);
+        });
+        console.log(sheeshiusEmbedContent);
+        message.channel.send(sheeshiusEmbed);
         const performance1 = performance.now();
         message.channel.send('Test took ' + (performance1 - performance0) + ' milliseconds.');
     });

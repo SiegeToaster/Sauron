@@ -1,0 +1,6 @@
+@echo off
+echo Starting Sauron...
+:A
+node .
+echo Fatal error, restarting Sauron...
+goto A
