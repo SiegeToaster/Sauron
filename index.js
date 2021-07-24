@@ -6,7 +6,6 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const fs = require('fs');
 const readline = require('readline');
-const { performance } = require('perf_hooks');
 const { google } = require('googleapis');
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/documents'];
 const TOKEN_PATH = 'token.json';
@@ -112,7 +111,7 @@ client.on ('message', message => {
         message.delete();
         message.channel.send('Your message has been deleted for not having :rainbow_flag: at the end.  Happy Pride Month!\n:rainbow_flag:\n:rainbow_flag:\n:rainbow_flag:\n:rainbow_flag:\n🏳️‍🌈');
     }
-    if (!message.content.startsWith(prefix)) return;
+    if (!message.content.startsWith(prefix) || message.content == prefix) return;
     // const guild = client.guilds.cache.get('761347053983891496');
     console.log(' ');
 	// =====DEBUG=====\\
@@ -334,22 +333,41 @@ client.on ('message', message => {
             setSpecificSetting(authCode, args[0], args[1], message);
         break;
 
-        case 'test':
-            // message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
-            const performance0 = performance.now();
-            const chapterNumber = [];
-            chapterNumber.push(parseInt(args[0].split(':')[0]));
-            const lineNumbers = [];
-            args[0].split(':')[1].split('-').forEach(element => {
-                lineNumbers.push(element - 1);
+        case 'sheeshius':
+            console.log(args);
+            let testCurrentChapter = -1;
+            // eslint-disable-next-line prefer-const
+            let testRequestedChaptersAndLines = {};
+            args.forEach(argument => {
+                if (argument.match(/,$/g)) argument = argument.split(',')[0];
+                console.log(argument);
+                if ((!argument.match(/^[0-9]+/g)) || (testCurrentChapter == -1 && !argument.includes(':'))) return;
+                console.log('pass 1');
+                if (argument.includes(':')) {
+                    argument = argument.split(':');
+                    const chapter = parseInt(argument[0]);
+                    const line = parseInt(argument[1]);
+                    testCurrentChapter = chapter;
+                    if (testRequestedChaptersAndLines[chapter] == null) testRequestedChaptersAndLines[parseInt(argument[0])] = [];
+                    testRequestedChaptersAndLines[testCurrentChapter].push(line);
+                    // console.log(testRequestedChaptersAndLines);
+                } else {
+                    const line = parseInt(argument);
+                    testRequestedChaptersAndLines[testCurrentChapter].push(line);
+                }
             });
-            console.log('Chapter Numbers:');
-            console.log(chapterNumber);
-            console.log('Line Numbers:');
-            console.log(lineNumbers);
-            console.log(' ');
-            getSheeshiusVerse(authCode, message, chapterNumber, lineNumbers, performance0);
-            break;
+            Object.values(testRequestedChaptersAndLines).forEach(element => {
+                console.log(element);
+                element = [new Set(element)];
+                element.sort();
+            });
+            console.log(testRequestedChaptersAndLines);
+            getSheeshiusVerse(authCode, message, testRequestedChaptersAndLines);
+        break;
+
+        case 'test':
+            message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
+        break;
 	}
 });
 
@@ -546,7 +564,8 @@ function getOfflineMembers(subjects, message) {
     return membersToReturn;
 }
 
-function getSheeshiusVerse(auth, message, chapters, lines, performance0) { //! giga cluttered, must fix
+function getSheeshiusVerse(auth, message, requestedChaptersAndLines) { //! giga cluttered, must fix
+    //! update to accept object (use 'Object.getOwnPropertyNames(requestedChaptersAndLines) to get the chapters')
     const docs = google.docs({ version: 'v1', auth });
     docs.documents.get({
         documentId: '1zGaKNYfLUeq7W0OdnFNzM3UkqohNB-waEtPg1vfLcQc',
@@ -566,7 +585,7 @@ function getSheeshiusVerse(auth, message, chapters, lines, performance0) { //! g
         let sheeshiusEmbedContent = {};
         let currentChapter = 0;
         let currentLine = 0;
-        if (!chapters) {
+        if (!requestedChaptersAndLines) {
             sheeshiusEmbed
                 .setDescription('All entries of The Holy Book of Sheeshius "sus" Maximus.')
                 .addField('\u200B', '\u200B');
@@ -587,45 +606,38 @@ function getSheeshiusVerse(auth, message, chapters, lines, performance0) { //! g
                     if (!element.paragraph.elements[0].textRun.content || element.paragraph.elements[0].textRun.content == '\n') return;
                     let embedContent = `${element.paragraph.elements[0].textRun.content}`;
                     embedContent = embedContent.replace('\n', '');
+                    // console.log(embedContent);
+                    // console.log(embedContent.includes('Chapter'));
                     if (embedContent.includes('Chapter')) {
-                        console.log('chapter+');
+                        console.log(`chapter+ ${embedContent}`);
                         currentChapter++;
                         currentLine = 0;
                         if (currentChapter == chapters) {
                             sheeshiusEmbedContent[embedContent.slice(-1)] = { name: `${embedContent}`, value: '' };
                             console.log(`chapter added: ${embedContent}`);
                         }
-                    }
-                    if (!embedContent.includes('Chapter')) {
+                    } else {
                         if (currentChapter == chapters && lines.includes(currentLine)) {
-                            sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)] = { name: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].name}`, value: `${sheeshiusEmbedContent[countObject(sheeshiusEmbedContent)].value}\n${embedContent}` };
+                            sheeshiusEmbedContent[currentChapter] = { name: `${sheeshiusEmbedContent[currentChapter].name}`, value: `${sheeshiusEmbedContent[currentChapter].value}\n${embedContent}` };
                             console.log(`line added: ${embedContent}`);
                         }
                         console.log(`check line ${currentChapter}:${currentLine}`);
                         console.log('line+');
                         currentLine++;
-                        console.log('bruh');
                     }
-                } catch {
-                    // console.log(`sheeshiusEmbed construct error: no element`);
+                    console.log(sheeshiusEmbedContent);
+                } catch (err) {
+                    console.log(`sheeshiusEmbed catch error ${err}`);
                 }
             });
-            for (let i = 1; i < (countObject(sheeshiusEmbedContent)); i++) {
-                console.log(`:A: ${i}`);
-                lines.forEach(element => {
-                    console.log(`:B: ${element}`);
-                    sheeshiusEmbedContent[i].value = sheeshiusEmbedContent[i].value.split('\n').splice(1)[element];
-                });
-            }
         }
+        console.log(sheeshiusEmbedContent);
 
         Object.values(sheeshiusEmbedContent).forEach(element => {
             sheeshiusEmbed.addFields(element);
         });
         console.log(sheeshiusEmbedContent);
         message.channel.send(sheeshiusEmbed);
-        const performance1 = performance.now();
-        message.channel.send('Test took ' + (performance1 - performance0) + ' milliseconds.');
     });
 }
 
