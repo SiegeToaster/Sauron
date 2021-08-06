@@ -78,7 +78,6 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Getscore', value: 'Gets the score for everyone in the database.  Optional: add mention(s) after the command to get their score only.  Example:\n?getscore\n?getScore `@Willius Dominus` `@Bennamus Jullius`' },
         { name: 'UpdateSettings', value: 'Re-fetches settings from database.  No return' },
         { name: 'Set', value: 'Changes settings.  After the command, a setting must be named followed by "true" or "false".  Valid settings are: "ping", "pride", "virgin", and "sus".  Example:\n?set ping true' },
-        { name: '\u200B', value: `\u200B ${prideFlag} testaroooooo` },
     )
     .setFooter('ligma');
 let fullMessage = '';
@@ -334,35 +333,56 @@ client.on ('message', message => {
         break;
 
         case 'sheeshius':
-            console.log(args);
-            let testCurrentChapter = -1;
+            // console.log(args);
+            let CurrentChapter = -1;
             // eslint-disable-next-line prefer-const
-            let testRequestedChaptersAndLines = {};
+            let RequestedChaptersAndLines = {};
             args.forEach(argument => {
                 if (argument.match(/,$/g)) argument = argument.split(',')[0];
-                console.log(argument);
-                if ((!argument.match(/^[0-9]+/g)) || (testCurrentChapter == -1 && !argument.includes(':'))) return;
-                console.log('pass 1');
+                // console.log(argument);
+                if (!argument.match(/^[0-9]+/g)) return;
+                // console.log('pass 1');
                 if (argument.includes(':')) {
                     argument = argument.split(':');
                     const chapter = parseInt(argument[0]);
-                    const line = parseInt(argument[1]);
-                    testCurrentChapter = chapter;
-                    if (testRequestedChaptersAndLines[chapter] == null) testRequestedChaptersAndLines[parseInt(argument[0])] = [];
-                    testRequestedChaptersAndLines[testCurrentChapter].push(line);
-                    // console.log(testRequestedChaptersAndLines);
+                    CurrentChapter = chapter;
+                    if (RequestedChaptersAndLines[chapter] == null) RequestedChaptersAndLines[parseInt(argument[0])] = [];
+                    if (argument[1].includes('-')) {
+                        const lines = argument[1].split('-');
+                        const start = parseInt(lines[0]);
+                        const end = parseInt(lines[1]);
+                        console.log(`start: ${start}, end: ${end}`);
+                        for (let i = start; i <= end; i++) {
+                            RequestedChaptersAndLines[CurrentChapter].push(i);
+                        }
+                    } else {
+                    RequestedChaptersAndLines[CurrentChapter].push(parseInt(argument[1]));
+                }
+                    // console.log(RequestedChaptersAndLines);
+                } else if (argument.includes('-')) {
+                    argument = argument.split('-');
+                    const start = parseInt(argument[0]);
+                    const end = parseInt(argument[1]);
+                    for (let i = start; i <= end; i++) {
+                        RequestedChaptersAndLines[CurrentChapter].push(i);
+                    }
+                } else if (CurrentChapter == -1 && !argument.includes(':')) {
+                    RequestedChaptersAndLines[argument] = [];
+                    for (let i = 1; i < 100; i++) {
+                        RequestedChaptersAndLines[argument].push(i);
+                    }
                 } else {
                     const line = parseInt(argument);
-                    testRequestedChaptersAndLines[testCurrentChapter].push(line);
+                    RequestedChaptersAndLines[CurrentChapter].push(line);
                 }
             });
-            Object.values(testRequestedChaptersAndLines).forEach(element => {
-                console.log(element);
+            Object.values(RequestedChaptersAndLines).forEach(element => {
+                // console.log(element);
                 element = [new Set(element)];
                 element.sort();
             });
-            console.log(testRequestedChaptersAndLines);
-            getSheeshiusVerse(authCode, message, testRequestedChaptersAndLines);
+            console.log(RequestedChaptersAndLines);
+            getSheeshiusVerse(authCode, message, RequestedChaptersAndLines);
         break;
 
         case 'test':
@@ -564,8 +584,8 @@ function getOfflineMembers(subjects, message) {
     return membersToReturn;
 }
 
-function getSheeshiusVerse(auth, message, requestedChaptersAndLines) { //! giga cluttered, must fix
-    //! update to accept object (use 'Object.getOwnPropertyNames(requestedChaptersAndLines) to get the chapters')
+function getSheeshiusVerse(auth, message, requestedChaptersAndLines) {
+    console.log(Object.getOwnPropertyNames(requestedChaptersAndLines));
     const docs = google.docs({ version: 'v1', auth });
     docs.documents.get({
         documentId: '1zGaKNYfLUeq7W0OdnFNzM3UkqohNB-waEtPg1vfLcQc',
@@ -584,8 +604,8 @@ function getSheeshiusVerse(auth, message, requestedChaptersAndLines) { //! giga 
         // eslint-disable-next-line prefer-const
         let sheeshiusEmbedContent = {};
         let currentChapter = 0;
-        let currentLine = 0;
-        if (!requestedChaptersAndLines) {
+        let currentLine = 1;
+        if (!countObject(requestedChaptersAndLines)) {
             sheeshiusEmbed
                 .setDescription('All entries of The Holy Book of Sheeshius "sus" Maximus.')
                 .addField('\u200B', '\u200B');
@@ -600,6 +620,10 @@ function getSheeshiusVerse(auth, message, requestedChaptersAndLines) { //! giga 
                 }
             });
         } else {
+            const chapters = [];
+            Object.getOwnPropertyNames(requestedChaptersAndLines).forEach(chapter => {
+                chapters.push(parseInt(chapter));
+            });
             sheeshiusEmbed.setDescription('A chapter of The Holy Book of Sheeshius "sus" Maximus.');
             documentData.forEach(element => {
                 try {
@@ -607,25 +631,24 @@ function getSheeshiusVerse(auth, message, requestedChaptersAndLines) { //! giga 
                     let embedContent = `${element.paragraph.elements[0].textRun.content}`;
                     embedContent = embedContent.replace('\n', '');
                     // console.log(embedContent);
-                    // console.log(embedContent.includes('Chapter'));
                     if (embedContent.includes('Chapter')) {
                         console.log(`chapter+ ${embedContent}`);
                         currentChapter++;
-                        currentLine = 0;
-                        if (currentChapter == chapters) {
+                        currentLine = 1;
+                        if (chapters.includes(currentChapter)) {
                             sheeshiusEmbedContent[embedContent.slice(-1)] = { name: `${embedContent}`, value: '' };
                             console.log(`chapter added: ${embedContent}`);
                         }
                     } else {
-                        if (currentChapter == chapters && lines.includes(currentLine)) {
+                        if (chapters.includes(currentChapter) && requestedChaptersAndLines[currentChapter].includes(currentLine)) {
                             sheeshiusEmbedContent[currentChapter] = { name: `${sheeshiusEmbedContent[currentChapter].name}`, value: `${sheeshiusEmbedContent[currentChapter].value}\n${embedContent}` };
                             console.log(`line added: ${embedContent}`);
                         }
                         console.log(`check line ${currentChapter}:${currentLine}`);
-                        console.log('line+');
+                        // console.log('line+');
                         currentLine++;
                     }
-                    console.log(sheeshiusEmbedContent);
+                    // console.log(sheeshiusEmbedContent);
                 } catch (err) {
                     console.log(`sheeshiusEmbed catch error ${err}`);
                 }
@@ -644,7 +667,7 @@ function getSheeshiusVerse(auth, message, requestedChaptersAndLines) { //! giga 
 function countObject(object) {
     let count = 0;
     for (const prop in object) {
-        if (object.hasOwnProperty(prop)) count = count + 1;
+        if (object.hasOwnProperty(prop)) count++;
     }
 
     return count;

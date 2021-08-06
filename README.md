@@ -49,16 +49,12 @@ On the first launch, make sure to use a terminal that you can input data into as
     - ?getScore `@Willius Dominus` `@Bennamus Jullius`
 - [x] set
     - sets a setting (ping, pride, virgin, or sus) to true or false
-- [ ] sheeshius
-    - get a verse from The Holy Book of Sheeshius
-    - chapters/lines can be declared.  For example:
-    - ?sheeshius 1:1
-- [ ] sheeshiusadd
-    - add a verse to The Holy Book of Sheeshius
-    - need to define chapter.  For example:
-    - ?sheeshiusadd 1 super interesting verse here
-    - a vote is then created, must have the support of 1 other member before being added.
-    - might not add this
+- [x] sheeshius
+    - get verses from The Holy Book of Sheeshius
+    - chapters, lines, both, or neither can be declared.  For example:
+    - ?sheeshius 1:1 (chapter 1 verse 1)
+    - ?sheeshius 1 (entire chapter 1)
+    - ?sheeshius (entire book of sheeshius)
 - [ ] addplaylist
     - adds a song to the database.  After the command, a song name and a link must be added.  Optionally, the artist name can be added Examples:
     - ?addplaylist Hey Ya! https://www.youtube.com/watch?v=PWgvGjAhvIw
