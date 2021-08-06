@@ -76,8 +76,8 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Jamtime', value: 'Pings everyone asking for jamtime and adds yes/no reactions.\n\nIf someone reacts yes, they get present jammer <:FeelsOkayMan:785613008247193660>.\nIf someone reacts no, they get absent jammer <:Sadge:804521949794795601>.' },
         { name: 'Rate', value: 'Sets the score in the database.  After the command, a user must be mentioned followed by a number (the score).  Example:\n?rate `@Willius Dominus` 10' },
         { name: 'Getscore', value: 'Gets the score for everyone in the database.  Optional: add mention(s) after the command to get their score only.  Example:\n?getscore\n?getScore `@Willius Dominus` `@Bennamus Jullius`' },
-        { name: 'UpdateSettings', value: 'Re-fetches settings from database.  No return' },
         { name: 'Set', value: 'Changes settings.  After the command, a setting must be named followed by "true" or "false".  Valid settings are: "ping", "pride", "virgin", and "sus".  Example:\n?set ping true' },
+        { name: 'sheeshius', value: 'get verse(s) from The Holy Book of Sheeshius.  Chapters, lines, both, or neither can be declared.  If none are declared, the entire book is sent.  If only a chapter or chapters are declared, it will send the entire chapters.  If both chapter and verse are declared (seperated with ":") it will send the verses.  Multiple verses can be declared with a "-" and/or ",".' },
     )
     .setFooter('ligma');
 let fullMessage = '';
@@ -127,9 +127,7 @@ client.on ('message', message => {
         break;
 
     case 'help':
-        message.channel.send(helpEmbed).then(sent => {
-            console.log(sent.content.endsWith('ligma'));
-        });
+        message.channel.send(helpEmbed);
         break;
 
 	case 'catjam':
@@ -351,7 +349,7 @@ client.on ('message', message => {
                         const lines = argument[1].split('-');
                         const start = parseInt(lines[0]);
                         const end = parseInt(lines[1]);
-                        console.log(`start: ${start}, end: ${end}`);
+                        // console.log(`start: ${start}, end: ${end}`);
                         for (let i = start; i <= end; i++) {
                             RequestedChaptersAndLines[CurrentChapter].push(i);
                         }
@@ -381,7 +379,7 @@ client.on ('message', message => {
                 element = [new Set(element)];
                 element.sort();
             });
-            console.log(RequestedChaptersAndLines);
+            // console.log(RequestedChaptersAndLines);
             getSheeshiusVerse(authCode, message, RequestedChaptersAndLines);
         break;
 
@@ -585,7 +583,7 @@ function getOfflineMembers(subjects, message) {
 }
 
 function getSheeshiusVerse(auth, message, requestedChaptersAndLines) {
-    console.log(Object.getOwnPropertyNames(requestedChaptersAndLines));
+    // console.log(Object.getOwnPropertyNames(requestedChaptersAndLines));
     const docs = google.docs({ version: 'v1', auth });
     docs.documents.get({
         documentId: '1zGaKNYfLUeq7W0OdnFNzM3UkqohNB-waEtPg1vfLcQc',
@@ -632,34 +630,34 @@ function getSheeshiusVerse(auth, message, requestedChaptersAndLines) {
                     embedContent = embedContent.replace('\n', '');
                     // console.log(embedContent);
                     if (embedContent.includes('Chapter')) {
-                        console.log(`chapter+ ${embedContent}`);
+                        // console.log(`chapter+ ${embedContent}`);
                         currentChapter++;
                         currentLine = 1;
                         if (chapters.includes(currentChapter)) {
                             sheeshiusEmbedContent[embedContent.slice(-1)] = { name: `${embedContent}`, value: '' };
-                            console.log(`chapter added: ${embedContent}`);
+                            // console.log(`chapter added: ${embedContent}`);
                         }
                     } else {
                         if (chapters.includes(currentChapter) && requestedChaptersAndLines[currentChapter].includes(currentLine)) {
                             sheeshiusEmbedContent[currentChapter] = { name: `${sheeshiusEmbedContent[currentChapter].name}`, value: `${sheeshiusEmbedContent[currentChapter].value}\n${embedContent}` };
-                            console.log(`line added: ${embedContent}`);
+                            // console.log(`line added: ${embedContent}`);
                         }
-                        console.log(`check line ${currentChapter}:${currentLine}`);
+                        // console.log(`check line ${currentChapter}:${currentLine}`);
                         // console.log('line+');
                         currentLine++;
                     }
                     // console.log(sheeshiusEmbedContent);
                 } catch (err) {
-                    console.log(`sheeshiusEmbed catch error ${err}`);
+                    // console.log(`sheeshiusEmbed catch error ${err}`);
                 }
             });
         }
-        console.log(sheeshiusEmbedContent);
+        // console.log(sheeshiusEmbedContent);
 
         Object.values(sheeshiusEmbedContent).forEach(element => {
             sheeshiusEmbed.addFields(element);
         });
-        console.log(sheeshiusEmbedContent);
+        // console.log(sheeshiusEmbedContent);
         message.channel.send(sheeshiusEmbed);
     });
 }
