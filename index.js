@@ -384,7 +384,8 @@ client.on ('message', message => {
         break;
 
         case 'test':
-            message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
+            // message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
+            getPlaylist(authCode, message);
         break;
 	}
 });
@@ -669,4 +670,15 @@ function countObject(object) {
     }
 
     return count;
+}
+
+function getPlaylist(auth, message) {
+	const sheets = google.sheets({ version: 'v4', auth });
+	sheets.spreadsheets.values.get({
+		spreadsheetId: SpreadsheetId,
+		range: 'Music!A1',
+	}, (err, res) => {
+		if (err) return console.log(`Error: ${err}`);
+		message.channel.send(res.data.values[0][0]);
+	});
 }
