@@ -250,7 +250,7 @@ client.on ('message', message => {
                         collectorX.on('collect', (reaction, user) => {
                             if (!reactedUsers.includes(user)) {
                                 reactedUsers.push(user);
-                                message.channel.send(`${(message.guild.members.cache.get(user.id)).nickname} absent jammer <:Sadge:804521949794795601> ${prideFlag}`);
+                                message.channel.send(`${(message.guild.members.cache.get(user.id)).nickname ? (message.guild.members.cache.get(user.id)).nickname : user.username} absent jammer <:Sadge:804521949794795601> ${prideFlag}`);
                             }
                         });
                         const filterY = (reaction, user) => {
@@ -260,7 +260,7 @@ client.on ('message', message => {
                         collectorY.on('collect', (reaction, user) => {
                             if (!reactedUsers.includes(user)) {
                                 reactedUsers.push(user);
-                                message.channel.send(`${(message.guild.members.cache.get(user.id).nickname)} present jammer <:FeelsOkayMan:785613008247193660> ${prideFlag}`);
+                                message.channel.send(`${(message.guild.members.cache.get(user.id)).nickname ? (message.guild.members.cache.get(user.id)).nickname : user.username} present jammer <:FeelsOkayMan:785613008247193660> ${prideFlag}`);
                             }
                         });
                     });
@@ -287,7 +287,7 @@ client.on ('message', message => {
             setScore(authCode, args[0], args[1], message);
             break;
 
-        case 'getscore':
+        case 'getscore': // ToDo: insteaed of checking against 3 specifics, get each id in the database and compare against.  Must use for loop for it to work (`A${i}:E${i}`)
             if (message.mentions.members.array().length < 1) {
                 getTotalScore(authCode, message);
             } else {
@@ -576,10 +576,14 @@ function getOfflineMembers(subjects, message) {
     if (!subjects.length) {
         subjects = message.guild.members.cache.array();
     }
+    // console.log(subjects);
     subjects.forEach(element => {
+        // console.log(element);
+        if (element.user.bot) return;
         const tempPresence = (element.presence.status);
-        if(tempPresence == 'offline' || tempPresence == 'idle') membersToReturn.push(element.nickname);
+        if(tempPresence == 'offline' || tempPresence == 'idle') membersToReturn.push(element.nickname ? element.nickname : element.user.username);
     });
+    // console.log(membersToReturn);
     return membersToReturn;
 }
 
@@ -596,7 +600,8 @@ function getSheeshiusVerse(auth, message, requestedChaptersAndLines) {
         const sheeshiusEmbed = new Discord.MessageEmbed()
             .setColor('#0099ff')
             .setTitle('The Holy Book of Sheeshius')
-            .setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png');
+            .setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
+            .setFooter(`Requested by: ${message.author}`);
         // eslint-disable-next-line prefer-const
         let documentData = res.data.body.content;
         documentData.splice(0, 12);
@@ -672,13 +677,20 @@ function countObject(object) {
     return count;
 }
 
-function getPlaylist(auth, message) {
+async function getPlaylist(auth, message) {
 	const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
 		spreadsheetId: SpreadsheetId,
-		range: 'Music!A1',
+		range: 'Music!A2:A1000',
 	}, (err, res) => {
 		if (err) return console.log(`Error: ${err}`);
 		message.channel.send(res.data.values[0][0]);
+        console.log(res.data);
+        let messageToSend = '';
+        for (const values of res.data.values) {
+            console.log(values);
+            messageToSend = messageToSend + values.toString();
+        }
+        message.channel.send(messageToSend);
 	});
 }
