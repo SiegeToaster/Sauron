@@ -3,13 +3,13 @@
 /* eslint-disable no-case-declarations */
 // =====SETUP=====\\
 const Discord = require('discord.js');
-const client = new Discord.Client();
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
+const { SpreadsheetId } = require('./private.json');
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/documents'];
 const TOKEN_PATH = 'token.json';
-const { SpreadsheetId } = require('./private.json');
+const client = new Discord.Client();
 let authCode = '';
 fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
