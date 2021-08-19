@@ -383,6 +383,28 @@ client.on ('message', message => {
             getSheeshiusVerse(authCode, message, RequestedChaptersAndLines);
         break;
 
+		case 'addplaylist':
+			/*
+				adds a song to the database.  After the command, a song name and a link must be added.  Optionally, the artist name can be added Examples:
+    				?addplaylist Hey Ya! https://www.youtube.com/watch?v=PWgvGjAhvIw
+    				?addplaylist Blitzkrieg Bop https://www.youtube.com/watch?v=iymtpePP8I8 Ramones
+			*/
+		break;
+
+		case 'getplaylist':
+			/*
+				get a song from playlist
+					without anything after command, returns a random song name and link
+					with 'all' after command, returns all song names in playlist
+					with a song name after command, returns song name and link of song (if it exists in the playlist)
+					with an artist after command, returns all songs by artists (if it exists in the playlist)
+					examples:
+						?getplaylist all
+						?getplaylist Hey Ya!
+						?getplaylist Ramones
+			*/
+		break;
+
         case 'test':
             // message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
             getPlaylist(authCode, message);
@@ -537,7 +559,15 @@ async function getSpecificSetting(auth, range) {
         }, (err, res) => {
             if (err) {
                 resolve(false);
-                return console.log(`Error: ${err}`);
+                console.log(`Error: ${err}`);
+				if (fs.existsSync('./token.json')) {
+					fs.unlink('./token.json', (err) => {
+						if (err) return console.error(err);
+						console.log('token.json successfully deleted.  Stopping bot...');
+						process.exit(0);
+					});
+				}
+				return;
             }
             resolve(res.data.values[0][0]);
         });
@@ -694,5 +724,3 @@ async function getPlaylist(auth, message) {
         message.channel.send(messageToSend);
 	});
 }
-
-// signing test v2
