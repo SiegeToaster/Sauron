@@ -403,11 +403,12 @@ client.on ('message', message => {
 						?getplaylist Hey Ya!
 						?getplaylist Ramones
 			*/
+			getPlaylist(authCode, message);
 		break;
 
         case 'test':
             // message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
-            getPlaylist(authCode, message);
+            test(authCode, message);
         break;
 	}
 });
@@ -709,18 +710,32 @@ function countObject(object) {
 
 async function getPlaylist(auth, message) {
 	const sheets = google.sheets({ version: 'v4', auth });
+    const values = await new Promise((resolve) => {
+        sheets.spreadsheets.values.get({
+            spreadsheetId: SpreadsheetId,
+            range: 'Music!A2:A1000',
+        }, (err, res) => {
+            if (err) return console.log(`Error: ${err}`);
+            message.channel.send(res.data.values[0][0]);
+            console.log(res.data);
+            const arrayOfNames = [];
+            values.forEach(element => {
+                element.push(arrayOfNames);
+            });
+            resolve(arrayOfNames);
+        });
+    });
+    console.log(values);
+}
+
+function test(auth, message) {
+    const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
 		spreadsheetId: SpreadsheetId,
-		range: 'Music!A2:A1000',
+        range: 'Music!A2:Z1000',
 	}, (err, res) => {
-		if (err) return console.log(`Error: ${err}`);
-		message.channel.send(res.data.values[0][0]);
-        console.log(res.data);
-        let messageToSend = '';
-        for (const values of res.data.values) {
-            console.log(values);
-            messageToSend = messageToSend + values.toString();
-        }
-        message.channel.send(messageToSend);
+		if (err) return console.error(`test function error: ${err}`);
+		console.log(res.data.values);
+		message.channel.send('test done.');
 	});
 }
