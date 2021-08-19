@@ -408,7 +408,7 @@ client.on ('message', message => {
 
         case 'test':
             // message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
-            test(authCode, message);
+            test(authCode, message, args[0]);
         break;
 	}
 });
@@ -728,7 +728,7 @@ async function getPlaylist(auth, message) {
     console.log(values);
 }
 
-function test(auth, message) {
+function test(auth, message, filter) {
     const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
 		spreadsheetId: SpreadsheetId,
@@ -736,6 +736,16 @@ function test(auth, message) {
 	}, (err, res) => {
 		if (err) return console.error(`test function error: ${err}`);
 		console.log(res.data.values);
+		const songsToReturn = [];
+		let filterIsArtist = false;
+		res.data.values.forEach(songArray => {
+			if (songArray[0] === filter) songArray[0].push(songsToReturn);
+			if (songArray[1] === filter) {
+				songArray[0].push(songsToReturn);
+				filterIsArtist = true;
+			}
+		});
+		console.log(songsToReturn);
 		message.channel.send('test done.');
 	});
 }
