@@ -694,5 +694,3 @@ async function getPlaylist(auth, message) {
         message.channel.send(messageToSend);
 	});
 }
-
-// test
