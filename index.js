@@ -715,12 +715,12 @@ async function getPlaylist(auth, message) {
             spreadsheetId: SpreadsheetId,
             range: 'Music!A2:A1000',
         }, (err, res) => {
-            if (err) return console.log(`Error: ${err}`);
+            if (err) return console.error(`Error: ${err}`);
             message.channel.send(res.data.values[0][0]);
             console.log(res.data);
             const arrayOfNames = [];
             values.forEach(element => {
-                element.push(arrayOfNames);
+                arrayOfNames.push(element);
             });
             resolve(arrayOfNames);
         });
@@ -739,12 +739,15 @@ function test(auth, message, filter) {
 		const songsToReturn = [];
 		let filterIsArtist = false;
 		res.data.values.forEach(songArray => {
-			if (songArray[0] === filter) songArray[0].push(songsToReturn);
+			if (songArray[0] === filter) songsToReturn.push(songArray[0]);
 			if (songArray[1] === filter) {
-				songArray[0].push(songsToReturn);
+				songsToReturn.push(songArray[0]);
 				filterIsArtist = true;
 			}
 		});
+		if (filterIsArtist) {
+			// create embed title "songs by ${artist}" and content all songs
+		}
 		console.log(songsToReturn);
 		message.channel.send('test done.');
 	});
