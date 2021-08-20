@@ -2,16 +2,16 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-case-declarations */
 // =====SETUP=====\\
-import { Client, MessageEmbed } from 'discord.js';
-import { readFile, writeFile, existsSync, unlink } from 'fs';
-import { createInterface } from 'readline';
-import { google } from 'googleapis';
-import { SpreadsheetId } from './private.json';
+const Discord = require('discord.js');
+const fs = require('fs');
+const readline = require('readline');
+const { google } = require('googleapis');
+const { SpreadsheetId } = require('./private.json');
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/documents'];
 const TOKEN_PATH = 'token.json';
-const client = new Client();
+const client = new Discord.Client();
 let authCode = '';
-readFile('credentials.json', (err, content) => {
+fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     authorize(JSON.parse(content));
 });
@@ -53,9 +53,9 @@ client.once('ready', () => {
     updateSettings(authCode);
 });
 
-import { prefix } from './config.json';
-import { discord_token } from './private.json';
-const helpEmbed = new MessageEmbed()
+const { prefix } = require('./config.json');
+const { discord_token } = require('./private.json');
+const helpEmbed = new Discord.MessageEmbed()
     .setColor('#0099ff')
     .setTitle('Help')
     .setAuthor('Sauron', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
@@ -418,7 +418,7 @@ function authorize(credentials) {
     const { client_secret, client_id, redirect_uris } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
-    readFile(TOKEN_PATH, (err, token) => {
+    fs.readFile(TOKEN_PATH, (err, token) => {
         if (err) return getNewToken(oAuth2Client);
         oAuth2Client.setCredentials(JSON.parse(token));
         authCode = oAuth2Client;
@@ -431,7 +431,7 @@ function getNewToken(oAuth2Client) {
         scope: SCOPES,
     });
     console.log('Authorize this app by visiting this url: ', authUrl);
-    const rl = createInterface({
+    const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
     });
@@ -440,7 +440,7 @@ function getNewToken(oAuth2Client) {
         oAuth2Client.getToken(code, (err, token) => {
             if (err) return console.error('Error while trying to retrieve access token', err);
             oAuth2Client.setCredentials(token);
-            writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+            fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
                 if (err) return console.error(err);
                 console.log('Token stored to ', TOKEN_PATH);
             });
@@ -561,8 +561,8 @@ async function getSpecificSetting(auth, range) {
             if (err) {
                 resolve(false);
                 console.log(`Error: ${err}`);
-				if (existsSync('./token.json')) {
-					unlink('./token.json', (err) => {
+				if (fs.existsSync('./token.json')) {
+					fs.unlink('./token.json', (err) => {
 						if (err) return console.error(err);
 						console.log('token.json successfully deleted.  Stopping bot...');
 						process.exit(0);
@@ -628,7 +628,7 @@ function getSheeshiusVerse(auth, message, requestedChaptersAndLines) {
             message.channel.send(`Failed to get Sheeshius verse ${prideFlag}`);
             return console.log('Error: getSheeshiusVerse google API error - ' + err);
         }
-        const sheeshiusEmbed = new MessageEmbed()
+        const sheeshiusEmbed = new Discord.MessageEmbed()
             .setColor('#0099ff')
             .setTitle('The Holy Book of Sheeshius')
             .setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
@@ -716,7 +716,7 @@ async function getPlaylist(auth, message, filter) {
             range: 'Music!A2:A1000',
         }, (err, res) => {
             if (err) return console.error(`Error: ${err}`);
-			const getPlaylistEmbed = new MessageEmbed()
+			const getPlaylistEmbed = new Discord.MessageEmbed()
 				.setColor('#0099ff')
 				.setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
 				.setFooter(`Requested by: ${message.author}`);
@@ -731,10 +731,8 @@ async function getPlaylist(auth, message, filter) {
 				}
 			});
 			if (filterIsArtist) {
-				getPlaylistEmbed.setTitle(`Songs by ${filter}`);
-				songsToReturn.forEach(song => {
-					getPlaylistEmbed.addField(`test`, `${song}`);
-				});
+				getPlaylistEmbed.setTitle(`Songs by ${filter}`)
+					.addFields(songsToReturn);
 			}
 			console.log(songsToReturn);
             resolve(getPlaylistEmbed);
