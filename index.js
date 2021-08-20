@@ -731,8 +731,10 @@ async function getPlaylist(auth, message, filter) {
 				}
 			});
 			if (filterIsArtist) {
-				getPlaylistEmbed.setTitle(`Songs by ${filter}`)
-					.addFields(songsToReturn);
+				getPlaylistEmbed.setTitle(`Songs by ${filter}`);
+				songsToReturn.forEach(song => {
+					getPlaylistEmbed.addField(`test`, `${song}`);
+				});
 			}
 			console.log(songsToReturn);
             resolve(getPlaylistEmbed);
