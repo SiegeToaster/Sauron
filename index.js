@@ -403,12 +403,12 @@ client.on ('message', message => {
 						?getplaylist Hey Ya!
 						?getplaylist Ramones
 			*/
-			getPlaylist(authCode, message);
+			getPlaylist(authCode, message, args[0]);
 		break;
 
         case 'test':
             // message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
-            test(authCode, message, args[0]);
+            getPlaylist(authCode, message, args[0]);
         break;
 	}
 });
@@ -708,7 +708,7 @@ function countObject(object) {
     return count;
 }
 
-async function getPlaylist(auth, message) {
+async function getPlaylist(auth, message, filter) {
 	const sheets = google.sheets({ version: 'v4', auth });
     const values = await new Promise((resolve) => {
         sheets.spreadsheets.values.get({
@@ -716,39 +716,27 @@ async function getPlaylist(auth, message) {
             range: 'Music!A2:A1000',
         }, (err, res) => {
             if (err) return console.error(`Error: ${err}`);
+			const getPlaylistEmbed = new Discord.MessageEmbed()
+				.setColor('#0099ff')
+				.setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
+				.setFooter(`Requested by: ${message.author}`);
             message.channel.send(res.data.values[0][0]);
-            console.log(res.data);
-            const arrayOfNames = [];
-            values.forEach(element => {
-                arrayOfNames.push(element);
-            });
-            resolve(arrayOfNames);
+            const songsToReturn = [];
+			let filterIsArtist = false;
+			res.data.values.forEach(songArray => {
+				if (songArray[0] === filter) songsToReturn.push(songArray[0]);
+				if (songArray[1] === filter) {
+					songsToReturn.push(songArray[0]);
+					filterIsArtist = true;
+				}
+			});
+			if (filterIsArtist) {
+				getPlaylistEmbed.setTitle(`Songs by ${filter}`)
+					.addFields(songsToReturn);
+			}
+			console.log(songsToReturn);
+            resolve(getPlaylistEmbed);
         });
     });
     console.log(values);
-}
-
-function test(auth, message, filter) {
-    const sheets = google.sheets({ version: 'v4', auth });
-	sheets.spreadsheets.values.get({
-		spreadsheetId: SpreadsheetId,
-        range: 'Music!A2:Z1000',
-	}, (err, res) => {
-		if (err) return console.error(`test function error: ${err}`);
-		console.log(res.data.values);
-		const songsToReturn = [];
-		let filterIsArtist = false;
-		res.data.values.forEach(songArray => {
-			if (songArray[0] === filter) songsToReturn.push(songArray[0]);
-			if (songArray[1] === filter) {
-				songsToReturn.push(songArray[0]);
-				filterIsArtist = true;
-			}
-		});
-		if (filterIsArtist) {
-			// create embed title "songs by ${artist}" and content all songs
-		}
-		console.log(songsToReturn);
-		message.channel.send('test done.');
-	});
 }
