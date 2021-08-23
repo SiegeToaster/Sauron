@@ -710,33 +710,39 @@ function countObject(object) {
 
 async function getPlaylist(auth, message, filter) {
 	const sheets = google.sheets({ version: 'v4', auth });
-    const values = await new Promise((resolve) => {
-        sheets.spreadsheets.values.get({
-            spreadsheetId: SpreadsheetId,
-            range: 'Music!A2:A1000',
-        }, (err, res) => {
-            if (err) return console.error(`Error: ${err}`);
-			const getPlaylistEmbed = new Discord.MessageEmbed()
-				.setColor('#0099ff')
-				.setAuthor('Sheeshius "sus" Maximus', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
-				.setFooter(`Requested by: ${message.author}`);
-            message.channel.send(res.data.values[0][0]);
-            const songsToReturn = [];
-			let filterIsArtist = false;
+	sheets.spreadsheets.values.get({
+        spreadsheetId: SpreadsheetId,
+        range: 'Music!A2:Z1000',
+    }, (err, res) => {
+		if (err) return console.error(`Error: ${err}`);
+		const getPlaylistEmbed = new Discord.MessageEmbed()
+			.setColor('#0099ff')
+			.setAuthor('Sauron', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
+			.setFooter(`Requested by: ${(message.guild.members.cache.get(message.author.id)).nickname ? (message.guild.members.cache.get(message.author.id)).nickname : message.author.username}`);
+        const songsToReturn = {};
+		let filterIsArtist = false;
+		// console.log(res.data.values);
+		if (filter) {
 			res.data.values.forEach(songArray => {
-				if (songArray[0] === filter) songsToReturn.push(songArray[0]);
+				if (songArray[0] === filter) songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[2]}` };
 				if (songArray[1] === filter) {
-					songsToReturn.push(songArray[0]);
+					songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[2]}` };
 					filterIsArtist = true;
 				}
 			});
-			if (filterIsArtist) {
-				getPlaylistEmbed.setTitle(`Songs by ${filter}`)
-					.addFields(songsToReturn);
-			}
-			console.log(songsToReturn);
-            resolve(getPlaylistEmbed);
-        });
-    });
-    console.log(values);
+		} else {
+			res.data.values.forEach(songArray => {
+				songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[2]}` };
+			});
+		}
+
+		getPlaylistEmbed.setTitle(`Songs ${filterIsArtist ? ("by " + filter) : "in playlist"}.`);
+		Object.values(songsToReturn).forEach(song => {
+			// console.log(song);
+			getPlaylistEmbed.addFields(song);
+		});
+		// console.log(songsToReturn);
+		// console.log(getPlaylistEmbed);
+		message.channel.send(getPlaylistEmbed);
+	});
 }
