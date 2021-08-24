@@ -389,6 +389,7 @@ client.on ('message', message => {
     				?addplaylist Hey Ya! https://www.youtube.com/watch?v=PWgvGjAhvIw
     				?addplaylist Blitzkrieg Bop https://www.youtube.com/watch?v=iymtpePP8I8 Ramones
 			*/
+			updatePlaylist(authCode, message, [args[0], args[1], args[2]]);
 		break;
 
 		case 'getplaylist':
@@ -593,13 +594,13 @@ async function setSpecificSetting(auth, range, value, message) {
         auth: auth,
     };
     try {
-        (sheets.spreadsheets.values.update(request)).data;
+		await (sheets.spreadsheets.values.update(request)).data;
+		updateSettings(authCode);
         message.channel.send(`Successfully updated setting to ${value} ${prideFlag}`);
     } catch (err) {
         message.channel.send(`Failed to update setting. ${prideFlag}`);
         console.log(err);
     }
-    setTimeout(function() { updateSettings(authCode); }, 1000);
 }
 
 function getOfflineMembers(subjects, message) {
@@ -708,7 +709,30 @@ function countObject(object) {
     return count;
 }
 
-async function getPlaylist(auth, message, filter) {
+function updatePlaylist(auth, message, songArray) {
+	const sheets = google.sheets({ version: 'v4', auth });
+	message.channel.send(songArray);
+	const request = {
+        spreadsheetId: SpreadsheetId,
+        range: 'Music!A2:Z1000',
+        valueInputOption: 'RAW',
+        resource: {
+            "range": 'Music!A2:Z1000',
+            "values": [['idfk lmao']],
+        },
+        auth: auth,
+    };
+	try {
+        (sheets.spreadsheets.values.update(request)).data;
+        message.channel.send(`Successfully updated setting to ${'idfk lmao'} ${prideFlag}`);
+    } catch (err) {
+        message.channel.send(`Failed to update setting. ${prideFlag}`);
+        console.log(err);
+    }
+
+}
+
+function getPlaylist(auth, message, filter) {
 	const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
         spreadsheetId: SpreadsheetId,
