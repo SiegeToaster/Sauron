@@ -760,18 +760,24 @@ function getPlaylist(auth, message, filter) {
         const songsToReturn = {};
 		let filterIsArtist = false;
 		// console.log(res.data.values);
-		if (!(filter === 'all')) {
-			res.data.values.forEach(songArray => {
-				if (songArray[0] === filter) songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[2]}` };
-				if (songArray[1] === filter) {
-					songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[2]}` };
-					filterIsArtist = true;
-				}
-			});
-		} else {
-			res.data.values.forEach(songArray => {
-				songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[2]}` };
-			});
+		try {
+			if (!(filter === 'all')) {
+				res.data.values.forEach(songArray => {
+					if (songArray[0] === filter) songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[1]}` };
+					if (songArray[2] === filter) {
+						songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[1]}` };
+						filterIsArtist = true;
+					}
+				});
+				if (countObject(songsToReturn) <= 0) return message.channel.send(`No songs by or named ${filter} in the playlist`);
+			} else {
+				res.data.values.forEach(songArray => {
+					songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[1]}` };
+				});
+			}
+		} catch (err) {
+			message.channel.send('No songs are in the playlist. <:FeelsWeirdMan:792656734409195542>');
+			return console.log(`getPlaylist catch: ${err}`);
 		}
 
 		getPlaylistEmbed.setTitle(`Songs ${filterIsArtist ? ("by " + filter) : "in playlist"}.`);
