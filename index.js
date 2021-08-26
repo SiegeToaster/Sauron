@@ -389,7 +389,7 @@ client.on ('message', message => {
     				?addplaylist Hey Ya! https://www.youtube.com/watch?v=PWgvGjAhvIw
     				?addplaylist Blitzkrieg Bop https://www.youtube.com/watch?v=iymtpePP8I8 Ramones
 			*/
-			updatePlaylist(authCode, message, [args[0], args[1], args[2]]);
+			addToPlaylist(authCode, message, [args[0], args[1], args[2]]);
 		break;
 
 		case 'getplaylist':
@@ -594,9 +594,9 @@ async function setSpecificSetting(auth, range, value, message) {
         auth: auth,
     };
     try {
-		await (sheets.spreadsheets.values.update(request)).data;
-		updateSettings(authCode);
+		(sheets.spreadsheets.values.update(request)).data;
         message.channel.send(`Successfully updated setting to ${value} ${prideFlag}`);
+		setTimeout(function() { updateSettings(authCode); }, 1000);
     } catch (err) {
         message.channel.send(`Failed to update setting. ${prideFlag}`);
         console.log(err);
@@ -709,30 +709,44 @@ function countObject(object) {
     return count;
 }
 
-function updatePlaylist(auth, message, songArray) {
+async function addToPlaylist(auth, message, songArray) {
+	if (!songArray) return message.channel.send('invalid song.');
 	const sheets = google.sheets({ version: 'v4', auth });
+	const playlistCount = await new Promise((resolve) => {
+		sheets.spreadsheets.values.get({
+			spreadsheetId: SpreadsheetId,
+			range: 'Music!A2:C1000',
+		}, (err, res) => {
+			if (err) return console.error(`countPlaylist Error: ${err}`);
+			resolve(res.data.values ? res.data.values.length + 2 : 2);
+		});
+	});
+	console.log(`Music!A${playlistCount}:C${playlistCount}`);
 	message.channel.send(songArray);
 	const request = {
         spreadsheetId: SpreadsheetId,
-        range: 'Music!A2:Z1000',
+        range: `Music!A${playlistCount}:C${playlistCount}`,
         valueInputOption: 'RAW',
         resource: {
-            "range": 'Music!A2:Z1000',
-            "values": [['idfk lmao']],
+            "range": `Music!A${playlistCount}:C${playlistCount}`,
+            "values": [songArray],
         },
         auth: auth,
     };
 	try {
         (sheets.spreadsheets.values.update(request)).data;
-        message.channel.send(`Successfully updated setting to ${'idfk lmao'} ${prideFlag}`);
+        message.channel.send(`Successfully added ${songArray[0]} ${prideFlag}`);
     } catch (err) {
-        message.channel.send(`Failed to update setting. ${prideFlag}`);
+        message.channel.send(`Failed to add song to playlist. ${prideFlag}`);
         console.log(err);
     }
 
 }
 
 function getPlaylist(auth, message, filter) {
+	if (!filter || filter.match(/[a|A][l|L]+/)) {
+		filter = 'all';
+	}
 	const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
         spreadsheetId: SpreadsheetId,
@@ -746,7 +760,7 @@ function getPlaylist(auth, message, filter) {
         const songsToReturn = {};
 		let filterIsArtist = false;
 		// console.log(res.data.values);
-		if (filter) {
+		if (!(filter === 'all')) {
 			res.data.values.forEach(songArray => {
 				if (songArray[0] === filter) songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[2]}` };
 				if (songArray[1] === filter) {
