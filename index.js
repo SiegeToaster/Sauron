@@ -691,7 +691,7 @@ function getSheeshiusVerse(auth, message, requestedChaptersAndLines) {
             });
         }
         // console.log(sheeshiusEmbedContent);
-
+		if (Object.values(sheeshiusEmbedContent)[0] ? !Object.values(sheeshiusEmbedContent)[0][1] : true) return message.channel.send('Invalid Chapter/Verse.');
         Object.values(sheeshiusEmbedContent).forEach(element => {
             sheeshiusEmbed.addFields(element);
         });
