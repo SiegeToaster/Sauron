@@ -389,7 +389,30 @@ client.on ('message', message => {
     				?addplaylist Hey Ya! https://www.youtube.com/watch?v=PWgvGjAhvIw
     				?addplaylist Blitzkrieg Bop https://www.youtube.com/watch?v=iymtpePP8I8 Ramones
 			*/
-			addToPlaylist(authCode, message, [args[0], args[1], args[2]]);
+			let currentAssign = 0;
+			let name = '';
+			let link = '';
+			let artist = '';
+			args.forEach((element) => {
+				if (element.startsWith('"')) currentAssign++;
+				switch (currentAssign) {
+					case 1:
+						name = name + element;
+						break;
+
+					case 2:
+						link = element;
+						currentAssign++;
+						break;
+
+					case 3:
+						artist = artist + element;
+						break;
+				}
+				if (element.endsWith('"')) currentAssign++;
+			});
+			console.log(`Song name: ${name}\nSong Link: ${link}\nSong artist: ${artist}`);
+			addToPlaylist(authCode, message, [name, link, artist]);
 		break;
 
 		case 'getplaylist':
