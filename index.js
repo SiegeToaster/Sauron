@@ -75,7 +75,9 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Getscore', value: 'Gets the score for everyone in the database.  Optional: add mention(s) after the command to get their score only.  Example:\n?getscore\n?getScore `@Willius Dominus` `@Bennamus Jullius`' },
         { name: 'Set', value: 'Changes settings.  After the command, a setting must be named followed by "true" or "false".  Valid settings are: "ping", "pride", "virgin", and "sus".  Example:\n?set ping true' },
         { name: 'sheeshius', value: 'get verse(s) from The Holy Book of Sheeshius.  Chapters, lines, both, or neither can be declared.  If none are declared, the entire book is sent.  If only a chapter or chapters are declared, it will send the entire chapters.  If both chapter and verse are declared (separated with ":") it will send the verses.  Multiple verses can be declared with a "-" and/or ",".' },
-    )
+		{ name: 'addPlaylist', value: 'Adds a song name, link, and optionally, an artist to the playlist.  Song name and artist must be in quotes.  Example:\n?addPlaylist "Puff the Magic Dragon" https://youtu.be/z15pxWUXvLY "Peter, Paul, and Mary"' },
+		{ name: 'getPlaylist', value: 'Gets a song from the playlist.  Song name or artist can be used as a filter.  Examples\n?getPlaylist Puff the Magic Dragon\n?getPlaylist Peter, Paul, and Mary\n?getPlaylist' },
+		)
     .setFooter('ligma');
 let fullMessage = '';
 
@@ -408,14 +410,15 @@ client.on ('message', message => {
 			let link = '';
 			let artist = '';
 			args.forEach((element) => {
+				const oldElement = element;
 				if (element.startsWith('"')) {
 					currentAssign++;
 					element = element.substring(1);
 				}
-				if (element.endsWith(':')) element = element.substring(element.length() - 1);
+				if (element.endsWith('"')) element = element.substring(0, element.length - 1);
 				switch (currentAssign) {
 					case 1:
-						name = name + (element);
+						name = name + ' ' + (element);
 						break;
 
 					case 2:
@@ -423,10 +426,10 @@ client.on ('message', message => {
 						break;
 
 					case 3:
-						artist = artist + element;
+						artist = artist + ' ' + element;
 						break;
 				}
-				if (element.endsWith('"')) currentAssign++;
+				if (oldElement.endsWith('"')) currentAssign++;
 			});
 			console.log(`Song name: ${name}\nSong Link: ${link}\nSong artist: ${artist}`);
 			addToPlaylist(authCode, message, [name, link, artist]);
