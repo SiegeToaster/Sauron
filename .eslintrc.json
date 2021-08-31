@@ -16,7 +16,7 @@
 		"curly": ["warn", "multi-line", "consistent"],
 		"dot-location": ["warn", "property"],
 		"handle-callback-err": "off",
-		"indent": "off",
+		"indent": ["warn", "tab"],
 		"max-nested-callbacks": ["warn", { "max": 4 }],
 		"max-statements-per-line": ["warn", { "max": 2 }],
 		"no-console": "off",
