@@ -1,6 +1,3 @@
-/* eslint-disable no-prototype-builtins */
-/* eslint-disable no-useless-escape */
-/* eslint-disable no-case-declarations */
 // =====SETUP=====\\
 const Discord = require('discord.js');
 const fs = require('fs');
@@ -77,7 +74,7 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: 'Rate', value: 'Sets the score in the database.  After the command, a user must be mentioned followed by a number (the score).  Example:\n?rate `@Willius Dominus` 10' },
         { name: 'Getscore', value: 'Gets the score for everyone in the database.  Optional: add mention(s) after the command to get their score only.  Example:\n?getscore\n?getScore `@Willius Dominus` `@Bennamus Jullius`' },
         { name: 'Set', value: 'Changes settings.  After the command, a setting must be named followed by "true" or "false".  Valid settings are: "ping", "pride", "virgin", and "sus".  Example:\n?set ping true' },
-        { name: 'sheeshius', value: 'get verse(s) from The Holy Book of Sheeshius.  Chapters, lines, both, or neither can be declared.  If none are declared, the entire book is sent.  If only a chapter or chapters are declared, it will send the entire chapters.  If both chapter and verse are declared (seperated with ":") it will send the verses.  Multiple verses can be declared with a "-" and/or ",".' },
+        { name: 'sheeshius', value: 'get verse(s) from The Holy Book of Sheeshius.  Chapters, lines, both, or neither can be declared.  If none are declared, the entire book is sent.  If only a chapter or chapters are declared, it will send the entire chapters.  If both chapter and verse are declared (separated with ":") it will send the verses.  Multiple verses can be declared with a "-" and/or ",".' },
     )
     .setFooter('ligma');
 let fullMessage = '';
@@ -121,21 +118,24 @@ client.on ('message', message => {
 	// console.log(`guild: ${guild}`);
     console.log(`input: ${command} ${args}`);
     switch (command) {
-	case 'ping':
+	case 'ping': {
         message.channel.send(`Pong. ${prideFlag}`);
         console.log('ping');
         break;
+	}
 
-    case 'help':
+    case 'help': {
         message.channel.send(helpEmbed);
         break;
+	}
 
-	case 'catjam':
+	case 'catjam': {
         message.delete();
         message.channel.send(`https://tenor.com/view/cat-cat-jam-nod-pet-kitty-gif-17932554 ${prideFlag}`);
         break;
+	}
 
-    case 'ben10':
+    case 'ben10': {
         message.delete();
             fullMessage = '';
             if (args.length > 0) {
@@ -146,25 +146,29 @@ client.on ('message', message => {
             }
             message.channel.send(`https://media.discordapp.net/attachments/831202194673107005/844378006147694622/Thats_far_enough.PNG ${prideFlag}`);
         break;
+	}
 
-    case 'delete':
+    case 'delete': {
         message.delete();
         message.channel.send(`https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg ${prideFlag}`);
         // ToDo: delete replied message if message is a reply.
         break;
+	}
 
-    case 'joe':
+    case 'joe': {
         message.channel.send(`joe mama ${prideFlag}`);
         break;
+	}
 
-    case 'forgot':
+    case 'forgot': {
         // eslint-disable-next-line no-unused-vars
         message.channel.send(`<:FeelsNotSureMan:841539607664918558> ${prideFlag}`).then(_nil => {
             message.channel.send(`I forgot ${prideFlag}`);
         });
     break;
+	}
 
-	case 'absent':
+	case 'absent': {
 		let offlineMembers = getOfflineMembers(message.mentions.members.array(), message);
         if (offlineMembers.length < 1) {
             message.channel.send(`No one is absent <:FeelsOkayMan:785613008247193660> ${prideFlag}`);
@@ -181,9 +185,11 @@ client.on ('message', message => {
             }
             message.channel.send(`${offlineMembers} are absent <:FeelsBadMan:794744572718481408> ${prideFlag}`);
         }
-        break;
 
-    case 'troll':
+        break;
+	}
+
+    case 'troll': {
         message.delete();
         if (args.length < 1) {
             return message.channel.send(`No one to troll <:FeelsBadMan:794744572718481408> ${prideFlag}`);
@@ -200,8 +206,9 @@ client.on ('message', message => {
             }
         }
         break;
+	}
 
-    case 'gamble':
+    case 'gamble': {
         if (args[0] > -1 && args[0] < 11) {
             const gambleNumber = Math.round(Math.random() * 10);
             if (args[0] === gambleNumber) {
@@ -226,8 +233,9 @@ client.on ('message', message => {
             });
         }
         break;
+	}
 
-    case 'coinflip':
+    case 'coinflip': {
         const flipNumber = Math.round(Math.random());
         console.log(flipNumber);
         if (flipNumber === 1) {
@@ -236,8 +244,9 @@ client.on ('message', message => {
             message.channel.send(`Tails! ${prideFlag}`);
         }
         break;
+	}
 
-    case 'jamtime':
+    case 'jamtime': {
             reactedUsers = [];
             message.channel.send(`@everyone jam time?  <:FeelsOkayMan:785613008247193660> ${prideFlag}`).then(sent => {
                 sent.react('✅')
@@ -266,8 +275,9 @@ client.on ('message', message => {
                     });
             });
             break;
+		}
 
-        case 'rate':
+        case 'rate': {
             if (args[0] == `<@!${message.author.id}>`) return message.channel.send(`Invalid user - Rule 10 <:FeelsWeirdMan:792656734409195542> ${prideFlag}`);
             if (args[1] < 1 || args[1] > 10) return message.channel.send(`Invalid rating <:FeelsWeirdMan:792656734409195542> ${prideFlag}`);
             if (!args[1]) return message.channel.send(`Missing Parameters <:FeelsWeirdMan:792656734409195542> ${prideFlag}`);
@@ -286,8 +296,9 @@ client.on ('message', message => {
             }
             setScore(authCode, args[0], args[1], message);
             break;
+		}
 
-        case 'getscore': // ToDo: insteaed of checking against 3 specifics, get each id in the database and compare against.  Must use for loop for it to work (`A${i}:E${i}`)
+        case 'getscore': { // ToDo: instead of checking against 3 specifics, get each id in the database and compare against.  Must use for loop for it to work (`A${i}:E${i}`)
             if (message.mentions.members.array().length < 1) {
                 getTotalScore(authCode, message);
             } else {
@@ -310,8 +321,9 @@ client.on ('message', message => {
                 });
             }
         break;
+		}
 
-        case 'set':
+        case 'set': {
             if (args[0] !== 'ping' && args[0] !== 'pride' && args[0] !== 'virgin' && args[0] !== 'sus') return message.channel.send(`${args[0]} is not a setting. ${prideFlag}`);
             if (args[1] !== 'true' && args[1] !== 'false') return message.channel.send(`${args[1]} is an invalid setting for ${args[0]} ${prideFlag}`);
             switch (args[0]) {
@@ -329,8 +341,9 @@ client.on ('message', message => {
             }
             setSpecificSetting(authCode, args[0], args[1], message);
         break;
+		}
 
-        case 'sheeshius':
+        case 'sheeshius': {
             // console.log(args);
             let CurrentChapter = -1;
             // eslint-disable-next-line prefer-const
@@ -382,8 +395,9 @@ client.on ('message', message => {
             // console.log(RequestedChaptersAndLines);
             getSheeshiusVerse(authCode, message, RequestedChaptersAndLines);
         break;
+		}
 
-		case 'addplaylist':
+		case 'addplaylist': {
 			/*
 				adds a song to the database.  After the command, a song name and a link must be added.  Optionally, the artist name can be added Examples:
     				?addplaylist Hey Ya! https://www.youtube.com/watch?v=PWgvGjAhvIw
@@ -414,8 +428,9 @@ client.on ('message', message => {
 			console.log(`Song name: ${name}\nSong Link: ${link}\nSong artist: ${artist}`);
 			addToPlaylist(authCode, message, [name, link, artist]);
 		break;
+		}
 
-		case 'getplaylist':
+		case 'getplaylist': {
 			/*
 				get a song from playlist
 					without anything after command, returns a random song name and link
@@ -429,11 +444,13 @@ client.on ('message', message => {
 			*/
 			getPlaylist(authCode, message, args[0]);
 		break;
+		}
 
-        case 'test':
+        case 'test': {
             // message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
             getPlaylist(authCode, message, args[0]);
         break;
+		}
 	}
 });
 
@@ -726,7 +743,7 @@ function getSheeshiusVerse(auth, message, requestedChaptersAndLines) {
 function countObject(object) {
     let count = 0;
     for (const prop in object) {
-        if (object.hasOwnProperty(prop)) count++;
+        if (Object.prototype.hasOwnProperty.call(prop)) count++;
     }
 
     return count;
