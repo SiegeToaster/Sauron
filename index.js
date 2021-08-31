@@ -408,15 +408,18 @@ client.on ('message', message => {
 			let link = '';
 			let artist = '';
 			args.forEach((element) => {
-				if (element.startsWith('"')) currentAssign++;
+				if (element.startsWith('"')) {
+					currentAssign++;
+					element = element.substring(1);
+				}
+				if (element.endsWith(':')) element = element.substring(element.length() - 1);
 				switch (currentAssign) {
 					case 1:
-						name = name + element;
+						name = name + (element);
 						break;
 
 					case 2:
 						link = element;
-						currentAssign++;
 						break;
 
 					case 3:
