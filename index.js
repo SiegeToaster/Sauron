@@ -418,7 +418,7 @@ client.on ('message', message => {
 			if (element.endsWith('"')) element = element.substring(0, element.length - 1);
 			switch (currentAssign) {
 			case 1:
-				name = [name, element].join(' ');
+				name = name ? [name, element].join(' ') : element;
 				break;
 
 			case 2:
@@ -426,12 +426,13 @@ client.on ('message', message => {
 				break;
 
 			case 3:
-				artist = [artist, element].join(' ');
+				artist = artist ? [artist, element].join(' ') : element;
 				break;
 			}
 			if (oldElement.endsWith('"')) currentAssign++;
 		});
-		// console.log(`Song name: ${name}\nSong Link: ${link}\nSong artist: ${artist}`);
+
+		console.log(`Song name: ${name}\nSong Link: ${link}\nSong artist: ${artist}`);
 		addToPlaylist(authCode, message, [name, link, artist]);
 		break;
 	}
@@ -759,6 +760,7 @@ function countObject(object) {
 async function addToPlaylist(auth, message, songArray) {
 	if (!songArray || songArray.length < 3) return message.channel.send('invalid song.');
 	const sheets = google.sheets({ version: 'v4', auth });
+	console.log(songArray);
 
 	const playlistCount = await new Promise((resolve) => {
 		sheets.spreadsheets.values.get({
