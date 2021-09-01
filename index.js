@@ -418,7 +418,7 @@ client.on ('message', message => {
 			if (element.endsWith('"')) element = element.substring(0, element.length - 1);
 			switch (currentAssign) {
 			case 1:
-				name = name + ' ' + (element);
+				name = [name, element].join(' ');
 				break;
 
 			case 2:
@@ -426,7 +426,7 @@ client.on ('message', message => {
 				break;
 
 			case 3:
-				artist = artist + ' ' + element;
+				artist = [artist, element].join(' ');
 				break;
 			}
 			if (oldElement.endsWith('"')) currentAssign++;
@@ -448,7 +448,8 @@ client.on ('message', message => {
 						?getplaylist Hey Ya!
 						?getplaylist Ramones
 			*/
-		getPlaylist(authCode, message, args[0]);
+		const songToFetch = args.join(' ');
+		getPlaylist(authCode, message, songToFetch);
 		break;
 	}
 
@@ -812,12 +813,16 @@ function getPlaylist(auth, message, filter) {
 		// console.log(res.data.values);
 		try {
 			if (!(filter === 'all')) {
+				console.log(res.data.values);
 				res.data.values.forEach(songArray => {
-					if (songArray[0] === filter) songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[1]}` };
-					if (songArray[2] === filter) {
+					console.log(songArray);
+					if (songArray[0] == filter) songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[1]}` };
+					console.log(songArray[0] == filter);
+					if (songArray[2] == filter) {
 						songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[1]}` };
 						filterIsArtist = true;
 					}
+					console.log(songArray[2] == filter);
 				});
 				if (countObject(songsToReturn) <= 0) return message.channel.send(`No songs by or named ${filter} in the playlist`);
 			} else {
