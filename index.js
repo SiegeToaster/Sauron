@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 // =====SETUP=====\\
 const Discord = require('discord.js');
 const fs = require('fs');
@@ -401,10 +402,10 @@ client.on ('message', message => {
 
 	case 'addplaylist': {
 		/*
-				adds a song to the database.  After the command, a song name and a link must be added.  Optionally, the artist name can be added Examples:
-    				?addplaylist Hey Ya! https://www.youtube.com/watch?v=PWgvGjAhvIw
-    				?addplaylist Blitzkrieg Bop https://www.youtube.com/watch?v=iymtpePP8I8 Ramones
-			*/
+			adds a song to the database.  After the command, a song name and a link must be added.  Optionally, the artist name can be added Examples:
+    			?addplaylist Hey Ya! https://www.youtube.com/watch?v=PWgvGjAhvIw
+    			?addplaylist Blitzkrieg Bop https://www.youtube.com/watch?v=iymtpePP8I8 Ramones
+		*/
 		let currentAssign = 0;
 		let name = '';
 		let link = '';
@@ -432,7 +433,7 @@ client.on ('message', message => {
 			if (oldElement.endsWith('"')) currentAssign++;
 		});
 
-		console.log(`Song name: ${name}\nSong Link: ${link}\nSong artist: ${artist}`);
+		// console.log(`Song name: ${name}\nSong Link: ${link}\nSong artist: ${artist}`);
 		addToPlaylist(authCode, message, [name, link, artist]);
 		break;
 	}
@@ -449,14 +450,14 @@ client.on ('message', message => {
 						?getplaylist Hey Ya!
 						?getplaylist Ramones
 			*/
-		const songToFetch = args.join(' ');
-		getPlaylist(authCode, message, songToFetch);
+		const filter = args.join(' ');
+		console.log(filter);
+		getPlaylist(authCode, message, filter);
 		break;
 	}
 
 	case 'test': {
-		// message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
-		getPlaylist(authCode, message, args[0]);
+		message.channel.send(`no tests today <:pepePOG:796983161249988648> ${prideFlag}`);
 		break;
 	}
 	}
@@ -751,7 +752,7 @@ function getSheeshiusVerse(auth, message, requestedChaptersAndLines) {
 function countObject(object) {
 	let count = 0;
 	for (const prop in object) {
-		if (Object.prototype.hasOwnProperty.call(prop)) count++;
+		if (object.hasOwnProperty(prop)) count++;
 	}
 
 	return count;
@@ -826,6 +827,7 @@ function getPlaylist(auth, message, filter) {
 					}
 					console.log(songArray[2] == filter);
 				});
+				// console.log(songsToReturn);
 				if (countObject(songsToReturn) <= 0) return message.channel.send(`No songs by or named ${filter} in the playlist`);
 			} else {
 				res.data.values.forEach(songArray => {
@@ -838,6 +840,7 @@ function getPlaylist(auth, message, filter) {
 		}
 
 		getPlaylistEmbed.setTitle(`Songs ${filterIsArtist ? ("by " + filter) : "in playlist"}.`);
+		// console.log(songsToReturn);
 		Object.values(songsToReturn).forEach(song => {
 			// console.log(song);
 			getPlaylistEmbed.addFields(song);
