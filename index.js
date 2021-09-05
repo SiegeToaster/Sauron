@@ -1,10 +1,11 @@
 /* eslint-disable no-prototype-builtins */
 // =====SETUP=====\\
-const Discord = require('discord.js');
-const fs = require('fs');
-const readline = require('readline');
-const { google } = require('googleapis');
-const { SpreadsheetId } = require('./private.json');
+import Discord from 'discord.js';
+import fs from 'fs';
+import readline from 'readline';
+import { config } from 'dotenv';
+import { google } from "googleapis";
+config();
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/documents'];
 const TOKEN_PATH = 'token.json';
 const client = new Discord.Client();
@@ -38,6 +39,8 @@ const correctionGifs = [
 	'https://tenor.com/view/youre-gif-18693005',
 ];
 let lastCorrectionIndex = 0;
+
+//=====SETTINGS=====\\
 let pingVar = 'false';
 let prideVar = 'false';
 let prideFlag = '';
@@ -51,8 +54,7 @@ client.once('ready', () => {
 	updateSettings(authCode);
 });
 
-const { prefix } = require('./config.json');
-const { discord_token } = require('./private.json');
+const prefix = process.env.prefix;
 const helpEmbed = new Discord.MessageEmbed()
 	.setColor('#0099ff')
 	.setTitle('Help')
@@ -82,9 +84,8 @@ const helpEmbed = new Discord.MessageEmbed()
 	.setFooter('ligma');
 let fullMessage = '';
 
-client.login(discord_token);
-
-// =====ACTIONS===== \\
+client.login(process.env.discord_token);
+//=====ACTIONS===== \\
 client.on ('message', message => {
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
@@ -501,7 +502,7 @@ function getNewToken(oAuth2Client) {
 function getTotalScore(auth, message) {
 	const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
-		spreadsheetId: SpreadsheetId,
+		spreadsheetId: process.env.SpreadsheetId,
 		range: 'A2:E4',
 	}, (err, res) => {
 		if (err) {
@@ -523,7 +524,7 @@ async function getSpecificScore(auth, range) {
 	const promise = new Promise((resolve) => {
 		const sheets = google.sheets({ version: 'v4', auth });
 		sheets.spreadsheets.values.get({
-			spreadsheetId: SpreadsheetId,
+			spreadsheetId: process.env.SpreadsheetId,
 			range: range,
 		}, (err, res) => {
 			if (err) {
@@ -541,7 +542,7 @@ async function getSpecificScore(auth, range) {
 function getIndividualScore(auth, range, message) {
 	const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
-		spreadsheetId: SpreadsheetId,
+		spreadsheetId: process.env.SpreadsheetId,
 		range: range,
 	}, (err, res) => {
 		if (err) {
@@ -569,7 +570,7 @@ async function setScore(auth, range, value, message) {
 	}
 	const sheets = google.sheets({ version: 'v4', auth });
 	const request = {
-		spreadsheetId: SpreadsheetId,
+		spreadsheetId: process.env.SpreadsheetId,
 		range: range,
 		valueInputOption: 'RAW',
 		resource: {
@@ -605,7 +606,7 @@ async function getSpecificSetting(auth, range) {
 	const promise = new Promise((resolve) => {
 		const sheets = google.sheets({ version: 'v4', auth });
 		sheets.spreadsheets.values.get({
-			spreadsheetId: SpreadsheetId,
+			spreadsheetId: process.env.SpreadsheetId,
 			range: range,
 		}, (err, res) => {
 			if (err) {
@@ -633,7 +634,7 @@ async function setSpecificSetting(auth, range, value, message) {
 	if (value === previousValue) return message.channel.send(`Setting is already ${value} ${prideFlag}`);
 
 	const request = {
-		spreadsheetId: SpreadsheetId,
+		spreadsheetId: process.env.SpreadsheetId,
 		range: range,
 		valueInputOption: 'RAW',
 		resource: {
@@ -765,7 +766,7 @@ async function addToPlaylist(auth, message, songArray) {
 
 	const playlistCount = await new Promise((resolve) => {
 		sheets.spreadsheets.values.get({
-			spreadsheetId: SpreadsheetId,
+			spreadsheetId: process.env.SpreadsheetId,
 			range: 'Music!A2:C1000',
 		}, (err, res) => {
 			if (err) return console.error(`countPlaylist Error: ${err}`);
@@ -775,7 +776,7 @@ async function addToPlaylist(auth, message, songArray) {
 
 	// console.log(`Music!A${playlistCount}:C${playlistCount}`);
 	const request = {
-		spreadsheetId: SpreadsheetId,
+		spreadsheetId: process.env.SpreadsheetId,
 		range: `Music!A${playlistCount}:C${playlistCount}`,
 		valueInputOption: 'RAW',
 		resource: {
@@ -802,7 +803,7 @@ function getPlaylist(auth, message, filter) {
 
 	const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
-		spreadsheetId: SpreadsheetId,
+		spreadsheetId: process.env.SpreadsheetId,
 		range: 'Music!A2:Z1000',
 	}, (err, res) => {
 		if (err) return console.error(`Error: ${err}`);

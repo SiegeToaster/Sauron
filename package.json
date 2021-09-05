@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Dumb bot for frens",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "dev": "node --experimental-json-modules index.js",
@@ -13,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0",
     "googleapis": "^39.2.0"
   },
   "devDependencies": {
