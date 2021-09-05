@@ -1,11 +1,14 @@
-async function addToPlaylist(auth, message, songArray) {
+import { google } from 'googleapis';
+const prideFlag = '';
+
+export async function addToPlaylist(auth, message, songArray) {
 	if (!songArray || songArray.length < 3) return message.channel.send('invalid song.');
 	const sheets = google.sheets({ version: 'v4', auth });
-	console.log(songArray);
+	// console.log(songArray);
 
 	const playlistCount = await new Promise((resolve) => {
 		sheets.spreadsheets.values.get({
-			spreadsheetId: SpreadsheetId,
+			spreadsheetId: process.env.SpreadsheetId,
 			range: 'Music!A2:C1000',
 		}, (err, res) => {
 			if (err) return console.error(`countPlaylist Error: ${err}`);
@@ -15,7 +18,7 @@ async function addToPlaylist(auth, message, songArray) {
 
 	// console.log(`Music!A${playlistCount}:C${playlistCount}`);
 	const request = {
-		spreadsheetId: SpreadsheetId,
+		spreadsheetId: process.env.SpreadsheetId,
 		range: `Music!A${playlistCount}:C${playlistCount}`,
 		valueInputOption: 'RAW',
 		resource: {

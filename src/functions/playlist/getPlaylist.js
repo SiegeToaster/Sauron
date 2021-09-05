@@ -1,4 +1,10 @@
-function getPlaylist(auth, message, filter) {
+import Discord from 'discord.js';
+import { google } from "googleapis";
+import { countObject } from '../utility/countObject.js';
+import { getAuthorName } from '../utility/getAuthorName.js';
+
+
+export function getPlaylist(auth, message, filter) {
 	if (!filter || filter.match(/[a|A][l|L]+/)) {
 		filter = 'all';
 	}
@@ -6,7 +12,7 @@ function getPlaylist(auth, message, filter) {
 
 	const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
-		spreadsheetId: SpreadsheetId,
+		spreadsheetId: process.env.SpreadsheetId,
 		range: 'Music!A2:Z1000',
 	}, (err, res) => {
 		if (err) return console.error(`Error: ${err}`);

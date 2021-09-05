@@ -1,4 +1,7 @@
-async function updateSettings(auth) {
+import { getSpecificSetting } from "./getSpecificSetting.js";
+
+export async function updateSettings(auth) {
+	let { pingVar, prideVar, prideFlag, virginVar, susVar } = 'false';
 	pingVar = await getSpecificSetting(auth, 'Settings!A2');
 	prideVar = await getSpecificSetting(auth, 'Settings!B2');
 	if (prideVar === 'true') {
@@ -10,4 +13,5 @@ async function updateSettings(auth) {
 	susVar = await getSpecificSetting(auth, 'Settings!D2');
 
 	console.log('Settings Updated.');
+	return [pingVar, prideVar, prideFlag, virginVar, susVar];
 }

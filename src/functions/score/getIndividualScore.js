@@ -1,7 +1,9 @@
-function getIndividualScore(auth, range, message) {
+import { google } from "googleapis";
+
+export function getIndividualScore(auth, range, message, prideFlag) {
 	const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
-		spreadsheetId: SpreadsheetId,
+		spreadsheetId: process.env.SpreadsheetId,
 		range: range,
 	}, (err, res) => {
 		if (err) {

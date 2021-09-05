@@ -1,8 +1,10 @@
-async function getSpecificScore(auth, range) {
+import { google } from "googleapis";
+
+export async function getSpecificScore(auth, range) {
 	const promise = new Promise((resolve) => {
 		const sheets = google.sheets({ version: 'v4', auth });
 		sheets.spreadsheets.values.get({
-			spreadsheetId: SpreadsheetId,
+			spreadsheetId: process.env.SpreadsheetId,
 			range: range,
 		}, (err, res) => {
 			if (err) {

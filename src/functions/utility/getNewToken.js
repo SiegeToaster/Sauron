@@ -1,7 +1,10 @@
-function getNewToken(oAuth2Client) {
+import fs from 'fs';
+import readline from 'readline';
+
+export function getNewToken(oAuth2Client) {
 	const authUrl = oAuth2Client.generateAuthUrl({
 		access_type: 'offline',
-		scope: SCOPES,
+		scope: ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/documents'],
 	});
 	console.log('Authorize this app by visiting this url: ', authUrl);
 	const rl = readline.createInterface({
@@ -13,9 +16,9 @@ function getNewToken(oAuth2Client) {
 		oAuth2Client.getToken(code, (err, token) => {
 			if (err) return console.error('Error while trying to retrieve access token', err);
 			oAuth2Client.setCredentials(token);
-			fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+			fs.writeFile("./../../../token.json", JSON.stringify(token), (err) => {
 				if (err) return console.error(err);
-				console.log('Token stored to ', TOKEN_PATH);
+				console.log('Token stored to ', "token.json");
 			});
 		});
 	});

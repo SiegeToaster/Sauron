@@ -1,5 +1,8 @@
-async function setScore(auth, range, value, message) {
-	const previousValues = await getSpecificScore(authCode, range);
+import { google } from "googleapis";
+import { getSpecificScore } from "./getSpecificScore.js";
+
+export async function setScore(auth, range, value, message, prideFlag) {
+	const previousValues = await getSpecificScore(auth, range);
 	if (!previousValues) return message.channel.send(`Failed to add score. ${prideFlag}`);
 	value = parseInt(value);
 	const previousScore = parseInt(previousValues[0][0]);
@@ -10,7 +13,7 @@ async function setScore(auth, range, value, message) {
 	}
 	const sheets = google.sheets({ version: 'v4', auth });
 	const request = {
-		spreadsheetId: SpreadsheetId,
+		spreadsheetId: process.env.SpreadsheetId,
 		range: range,
 		valueInputOption: 'RAW',
 		resource: {

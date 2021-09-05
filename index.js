@@ -2,17 +2,14 @@
 // =====SETUP=====\\
 import Discord from 'discord.js';
 import fs from 'fs';
-import readline from 'readline';
 import { config } from 'dotenv';
 import { google } from "googleapis";
 config();
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/documents'];
-const TOKEN_PATH = 'token.json';
 const client = new Discord.Client();
 let authCode = '';
 fs.readFile('credentials.json', (err, content) => {
 	if (err) return console.log('Error loading client secret file:', err);
-	authorize(JSON.parse(content));
+	authCode = authorize(JSON.parse(content));
 });
 let reactedUsers = [`
 > ⠀⠀⠉⠛⠛⠻⢿⣿⣿⣿⣿⣿⣿⣶⣶⣶⣶⣶⣶⣶⣶⣦⣤⣄⡀⠀⠀⠀⠀⠀
@@ -47,11 +44,32 @@ let prideFlag = '';
 let virginVar = 'false';
 let susVar = 'false';
 
+//=====FUNCTIONS=====\\
+import { authorize } from "./src/functions/utility/authorize.js";
+import { countObject } from "./src/functions/utility/countObject.js";
+import { getAuthorName } from "./src/functions/utility/getAuthorName.js";
+
+import { addToPlaylist } from "./src/functions/playlist/addToPlaylist.js";
+import { getPlaylist } from "./src/functions/playlist/getPlaylist.js";
+
+import { getIndividualScore } from "./src/functions/score/getIndividualScore.js";
+import { getTotalScore } from "./src/functions/score/getTotalScore.js";
+import { setScore } from "./src/functions/score/setScore.js";
+
+import { setSpecificSetting } from "./src/functions/settings/setSpecificSetting.js";
+import { updateSettings } from "./src/functions/settings/updateSettings.js";
+
+
 client.once('ready', () => {
 	console.log('');
 	console.log('Sauron is now online.');
 	client.user.setStatus("online");
-	updateSettings(authCode);
+	const settingsArray = updateSettings(authCode);
+	pingVar = settingsArray[0];
+	prideVar = settingsArray[1];
+	prideFlag = settingsArray[2];
+	virginVar = settingsArray[3];
+	susVar = settingsArray[4];
 });
 
 const prefix = process.env.prefix;
@@ -298,13 +316,13 @@ client.on ('message', message => {
 			args[0] = 'B4:D4';
 			break;
 		}
-		setScore(authCode, args[0], args[1], message);
+		setScore(authCode, args[0], args[1], message, prideFlag);
 		break;
 	}
 
 	case 'getscore': { // ToDo: instead of checking against 3 specifics, get each id in the database and compare against.  Must use for loop for it to work (`A${i}:E${i}`)
 		if (message.mentions.members.array().length < 1) {
-			getTotalScore(authCode, message);
+			getTotalScore(authCode, message, prideFlag);
 		} else {
 			message.mentions.members.array().forEach(element => {
 				console.log(element.id);
@@ -321,7 +339,7 @@ client.on ('message', message => {
 					element = 'A4:E4';
 					break;
 				}
-				getIndividualScore(authCode, element, message);
+				getIndividualScore(authCode, element, message, prideFlag);
 			});
 		}
 		break;
@@ -343,7 +361,13 @@ client.on ('message', message => {
 		case 'sus': args[0] = 'Settings!D2';
 			break;
 		}
-		setSpecificSetting(authCode, args[0], args[1], message);
+
+		const settingsArray = setSpecificSetting(authCode, args[0], args[1], message, prideFlag);
+		pingVar = settingsArray[0];
+		prideVar = settingsArray[1];
+		prideFlag = settingsArray[2];
+		virginVar = settingsArray[3];
+		susVar = settingsArray[4];
 		break;
 	}
 
@@ -465,193 +489,6 @@ client.on ('message', message => {
 });
 
 // =====Functions===== \\
-function authorize(credentials) {
-	const { client_secret, client_id, redirect_uris } = credentials.installed;
-	const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
-
-	fs.readFile(TOKEN_PATH, (err, token) => {
-		if (err) return getNewToken(oAuth2Client);
-		oAuth2Client.setCredentials(JSON.parse(token));
-		authCode = oAuth2Client;
-	});
-}
-
-function getNewToken(oAuth2Client) {
-	const authUrl = oAuth2Client.generateAuthUrl({
-		access_type: 'offline',
-		scope: SCOPES,
-	});
-	console.log('Authorize this app by visiting this url: ', authUrl);
-	const rl = readline.createInterface({
-		input: process.stdin,
-		output: process.stdout,
-	});
-	rl.question('Enter the code from that page here: ', (code) => {
-		rl.close();
-		oAuth2Client.getToken(code, (err, token) => {
-			if (err) return console.error('Error while trying to retrieve access token', err);
-			oAuth2Client.setCredentials(token);
-			fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-				if (err) return console.error(err);
-				console.log('Token stored to ', TOKEN_PATH);
-			});
-		});
-	});
-}
-
-function getTotalScore(auth, message) {
-	const sheets = google.sheets({ version: 'v4', auth });
-	sheets.spreadsheets.values.get({
-		spreadsheetId: process.env.SpreadsheetId,
-		range: 'A2:E4',
-	}, (err, res) => {
-		if (err) {
-			message.channel.send(`Failed to get scores <:FeelsDankMan:794744902172540968> ${prideFlag}`);
-			return console.error(`The API returned an error: ${err}`);
-		}
-		const rows = res.data.values;
-		if (rows.length && message) {
-			rows.map((row) => {
-				message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]} ${prideFlag}`);
-			});
-		} else {
-			console.error('No data found.');
-		}
-	});
-}
-
-async function getSpecificScore(auth, range) {
-	const promise = new Promise((resolve) => {
-		const sheets = google.sheets({ version: 'v4', auth });
-		sheets.spreadsheets.values.get({
-			spreadsheetId: process.env.SpreadsheetId,
-			range: range,
-		}, (err, res) => {
-			if (err) {
-				resolve(false);
-				return console.error(`The API returned an error: ${err}`);
-			} else {
-				const rows = res.data.values;
-				resolve(rows);
-			}
-		});
-	});
-	return await promise;
-}
-
-function getIndividualScore(auth, range, message) {
-	const sheets = google.sheets({ version: 'v4', auth });
-	sheets.spreadsheets.values.get({
-		spreadsheetId: process.env.SpreadsheetId,
-		range: range,
-	}, (err, res) => {
-		if (err) {
-			message.channel.send(`Failed to get scores <:FeelsDankMan:794744902172540968> ${prideFlag}`);
-			return console.error(`The API returned an error: ${err}`);
-		}
-		const row = res.data.values[0];
-		if (row.length && message) {
-			message.channel.send(`${(message.guild.members.cache.get(row[0])).nickname} - Total Score: ${row[1]}, Number of Ratings: ${row[2]}, Highest Rating: ${row[3]}, Average Rating: ${row[4]} ${prideFlag}`);
-		} else {
-			console.error('No data found.');
-		}
-	});
-}
-
-async function setScore(auth, range, value, message) {
-	const previousValues = await getSpecificScore(authCode, range);
-	if (!previousValues) return message.channel.send(`Failed to add score. ${prideFlag}`);
-	value = parseInt(value);
-	const previousScore = parseInt(previousValues[0][0]);
-	const previousNumber = parseInt(previousValues[0][1]);
-	let highest = parseInt(previousValues[0][2]);
-	if (value > highest) {
-		highest = value;
-	}
-	const sheets = google.sheets({ version: 'v4', auth });
-	const request = {
-		spreadsheetId: process.env.SpreadsheetId,
-		range: range,
-		valueInputOption: 'RAW',
-		resource: {
-			"range": range,
-			"values": [[value + previousScore, previousNumber + 1, highest]],
-		},
-		auth: auth,
-	};
-	try {
-		(sheets.spreadsheets.values.update(request)).data;
-		message.channel.send(`Score of ${value} successfully added to ${message.mentions.users.first()}. ${prideFlag}`);
-	} catch (err) {
-		message.channel.send(`Failed to add score. ${prideFlag}`);
-		console.error(`${err}`);
-	}
-}
-
-async function updateSettings(auth) {
-	pingVar = await getSpecificSetting(auth, 'Settings!A2');
-	prideVar = await getSpecificSetting(auth, 'Settings!B2');
-	if (prideVar === 'true') {
-		prideFlag = '🏳️‍🌈';
-	} else {
-		prideFlag = '';
-	}
-	virginVar = await getSpecificSetting(auth, 'Settings!C2');
-	susVar = await getSpecificSetting(auth, 'Settings!D2');
-
-	console.log('Settings Updated.');
-}
-
-async function getSpecificSetting(auth, range) {
-	const promise = new Promise((resolve) => {
-		const sheets = google.sheets({ version: 'v4', auth });
-		sheets.spreadsheets.values.get({
-			spreadsheetId: process.env.SpreadsheetId,
-			range: range,
-		}, (err, res) => {
-			if (err) {
-				resolve(false);
-				console.log(`Error: ${err}`);
-				if (fs.existsSync('./token.json')) {
-					fs.unlink('./token.json', (err) => {
-						if (err) return console.error(err);
-						console.log('token.json successfully deleted.  Stopping bot...');
-						process.exit(0);
-					});
-				}
-				return;
-			}
-			resolve(res.data.values[0][0]);
-		});
-	});
-	return await promise;
-}
-
-async function setSpecificSetting(auth, range, value, message) {
-	const sheets = google.sheets({ version: 'v4', auth });
-	const previousValue = await getSpecificSetting(auth, range);
-	if (!previousValue) return message.channel.send(`Failed to update setting. ${prideFlag}`);
-	if (value === previousValue) return message.channel.send(`Setting is already ${value} ${prideFlag}`);
-
-	const request = {
-		spreadsheetId: process.env.SpreadsheetId,
-		range: range,
-		valueInputOption: 'RAW',
-		resource: {
-			"range": range,
-			"values": [[value]],
-		},
-		auth: auth,
-	};
-	try {
-		(sheets.spreadsheets.values.update(request)).data;
-		message.channel.send(`Successfully updated setting to ${value} ${prideFlag}`);
-		setTimeout(function() { updateSettings(authCode); }, 1000);
-	} catch (err) {
-		message.channel.send(`Failed to update setting. ${prideFlag}`);
-		console.log(err);
-	}
-}
 
 function getOfflineMembers(subjects, message) {
 	const membersToReturn = [];
@@ -748,110 +585,4 @@ function getSheeshiusVerse(auth, message, requestedChaptersAndLines) {
 		// console.log(sheeshiusEmbedContent);
 		message.channel.send(sheeshiusEmbed);
 	});
-}
-
-function countObject(object) {
-	let count = 0;
-	for (const prop in object) {
-		if (object.hasOwnProperty(prop)) count++;
-	}
-
-	return count;
-}
-
-async function addToPlaylist(auth, message, songArray) {
-	if (!songArray || songArray.length < 3) return message.channel.send('invalid song.');
-	const sheets = google.sheets({ version: 'v4', auth });
-	console.log(songArray);
-
-	const playlistCount = await new Promise((resolve) => {
-		sheets.spreadsheets.values.get({
-			spreadsheetId: process.env.SpreadsheetId,
-			range: 'Music!A2:C1000',
-		}, (err, res) => {
-			if (err) return console.error(`countPlaylist Error: ${err}`);
-			resolve(res.data.values ? res.data.values.length + 2 : 2);
-		});
-	});
-
-	// console.log(`Music!A${playlistCount}:C${playlistCount}`);
-	const request = {
-		spreadsheetId: process.env.SpreadsheetId,
-		range: `Music!A${playlistCount}:C${playlistCount}`,
-		valueInputOption: 'RAW',
-		resource: {
-			"range": `Music!A${playlistCount}:C${playlistCount}`,
-			"values": [songArray],
-		},
-		auth: auth,
-	};
-
-	try {
-		(sheets.spreadsheets.values.update(request)).data;
-		message.channel.send(`Successfully added ${songArray[0]} ${prideFlag}`);
-	} catch (err) {
-		message.channel.send(`Failed to add song to playlist. ${prideFlag}`);
-		console.log(err);
-	}
-}
-
-function getPlaylist(auth, message, filter) {
-	if (!filter || filter.match(/[a|A][l|L]+/)) {
-		filter = 'all';
-	}
-	console.log(`filter: ${filter}`);
-
-	const sheets = google.sheets({ version: 'v4', auth });
-	sheets.spreadsheets.values.get({
-		spreadsheetId: process.env.SpreadsheetId,
-		range: 'Music!A2:Z1000',
-	}, (err, res) => {
-		if (err) return console.error(`Error: ${err}`);
-
-		const getPlaylistEmbed = new Discord.MessageEmbed()
-			.setColor('#0099ff')
-			.setAuthor('Sauron', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
-			.setFooter(`Requested by: ${getAuthorName(message, message.author)}`);
-		const songsToReturn = {};
-		let filterIsArtist = false;
-		// console.log(res.data.values);
-		try {
-			if (!(filter === 'all')) {
-				console.log(res.data.values);
-				res.data.values.forEach(songArray => {
-					console.log(songArray);
-					if (songArray[0] == filter) songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[1]}` };
-					console.log(songArray[0] == filter);
-					if (songArray[2] == filter) {
-						songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[1]}` };
-						filterIsArtist = true;
-					}
-					console.log(songArray[2] == filter);
-				});
-				// console.log(songsToReturn);
-				if (countObject(songsToReturn) <= 0) return message.channel.send(`No songs by or named ${filter} in the playlist`);
-			} else {
-				res.data.values.forEach(songArray => {
-					songsToReturn[countObject(songsToReturn)] = { name: `${songArray[0]}`, value: `${songArray[1]}` };
-				});
-			}
-		} catch (err) {
-			message.channel.send('No songs are in the playlist. <:FeelsWeirdMan:792656734409195542>');
-			return console.log(`getPlaylist catch: ${err}`);
-		}
-
-		getPlaylistEmbed.setTitle(`Songs ${filterIsArtist ? ("by " + filter) : "in playlist"}.`);
-		// console.log(songsToReturn);
-		Object.values(songsToReturn).forEach(song => {
-			// console.log(song);
-			getPlaylistEmbed.addFields(song);
-		});
-		// console.log(songsToReturn);
-		// console.log(getPlaylistEmbed);
-		message.channel.send(getPlaylistEmbed);
-	});
-}
-
-function getAuthorName(message, user) {
-	return (message.guild.members.cache.get(user.id)).nickname ? (message.guild.members.cache.get(user.id)).nickname : user.username;
 }

@@ -1,11 +1,15 @@
-async function setSpecificSetting(auth, range, value, message) {
+import { google } from "googleapis";
+import { getSpecificSetting } from "./getSpecificSetting.js";
+import { updateSettings } from "./../settings/updateSettings.js";
+
+export async function setSpecificSetting(auth, range, value, message, prideFlag) {
 	const sheets = google.sheets({ version: 'v4', auth });
 	const previousValue = await getSpecificSetting(auth, range);
 	if (!previousValue) return message.channel.send(`Failed to update setting. ${prideFlag}`);
 	if (value === previousValue) return message.channel.send(`Setting is already ${value} ${prideFlag}`);
 
 	const request = {
-		spreadsheetId: SpreadsheetId,
+		spreadsheetId: process.env.SpreadsheetId,
 		range: range,
 		valueInputOption: 'RAW',
 		resource: {
@@ -15,9 +19,11 @@ async function setSpecificSetting(auth, range, value, message) {
 		auth: auth,
 	};
 	try {
+		let updatedSettings = [];
 		(sheets.spreadsheets.values.update(request)).data;
 		message.channel.send(`Successfully updated setting to ${value} ${prideFlag}`);
-		setTimeout(function() { updateSettings(authCode); }, 1000);
+		setTimeout(function() { updatedSettings = updateSettings(auth); }, 1000);
+		return updatedSettings;
 	} catch (err) {
 		message.channel.send(`Failed to update setting. ${prideFlag}`);
 		console.log(err);
