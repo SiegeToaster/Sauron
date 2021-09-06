@@ -1,4 +1,8 @@
-function getSheeshiusVerse(auth, message, requestedChaptersAndLines) {
+import Discord from 'discord.js';
+import { google } from 'googleapis';
+import { countObject } from './utility/countObject.js';
+
+export function getSheeshiusVerse(auth, message, requestedChaptersAndLines, prideFlag) {
 	// console.log(Object.getOwnPropertyNames(requestedChaptersAndLines));
 	const docs = google.docs({ version: 'v1', auth });
 	docs.documents.get({

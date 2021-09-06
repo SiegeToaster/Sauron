@@ -1,4 +1,4 @@
-function getOfflineMembers(subjects, message) {
+export function getOfflineMembers(subjects, message) {
 	const membersToReturn = [];
 	if (!subjects.length) {
 		subjects = message.guild.members.cache.array();
