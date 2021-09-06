@@ -7,7 +7,7 @@ export async function updateSettings(auth) {
 	if (prideVar === 'true') {
 		prideFlag = '🏳️‍🌈';
 	} else {
-		prideFlag = '';
+		prideFlag = ' ';
 	}
 	virginVar = await getSpecificSetting(auth, 'Settings!C2');
 	susVar = await getSpecificSetting(auth, 'Settings!D2');

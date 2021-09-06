@@ -38,11 +38,7 @@ const correctionGifs = [
 let lastCorrectionIndex = 0;
 
 //=====SETTINGS=====\\
-let pingVar = 'false';
-let prideVar = 'false';
-let prideFlag = '';
-let virginVar = 'false';
-let susVar = 'false';
+let pingVar, prideVar, prideFlag, virginVar, susVar;
 
 //=====FUNCTIONS=====\\
 import { authorize } from "./src/functions/utility/authorize.js";
@@ -64,12 +60,14 @@ client.once('ready', () => {
 	console.log('');
 	console.log('Sauron is now online.');
 	client.user.setStatus("online");
-	const settingsArray = updateSettings(authCode);
-	pingVar = settingsArray[0];
-	prideVar = settingsArray[1];
-	prideFlag = settingsArray[2];
-	virginVar = settingsArray[3];
-	susVar = settingsArray[4];
+	(async () => {
+		const settingsArray = await updateSettings(authCode);
+		pingVar = settingsArray[0];
+		prideVar = settingsArray[1];
+		prideFlag = settingsArray[2];
+		virginVar = settingsArray[3];
+		susVar = settingsArray[4];
+	})();
 });
 
 const prefix = process.env.prefix;
@@ -362,12 +360,14 @@ client.on ('message', message => {
 			break;
 		}
 
-		const settingsArray = setSpecificSetting(authCode, args[0], args[1], message, prideFlag);
-		pingVar = settingsArray[0];
-		prideVar = settingsArray[1];
-		prideFlag = settingsArray[2];
-		virginVar = settingsArray[3];
-		susVar = settingsArray[4];
+		(async () => {
+			const settingsArray = await setSpecificSetting(authCode, args[0], args[1], message, prideFlag);
+			pingVar = settingsArray[0];
+			prideVar = settingsArray[1];
+			prideFlag = settingsArray[2];
+			virginVar = settingsArray[3];
+			susVar = settingsArray[4];
+		})();
 		break;
 	}
 

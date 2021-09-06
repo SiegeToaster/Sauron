@@ -16,7 +16,7 @@ export function getNewToken(oAuth2Client) {
 		oAuth2Client.getToken(code, (err, token) => {
 			if (err) return console.error('Error while trying to retrieve access token', err);
 			oAuth2Client.setCredentials(token);
-			fs.writeFile("./../../../token.json", JSON.stringify(token), (err) => {
+			fs.writeFile("token.json", JSON.stringify(token), (err) => {
 				if (err) return console.error(err);
 				console.log('Token stored to ', "token.json");
 			});
