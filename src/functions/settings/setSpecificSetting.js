@@ -19,10 +19,9 @@ export default async function setSpecificSetting(auth, range, value, message, pr
 		auth: auth,
 	};
 	try {
-		let updatedSettings = [];
 		(sheets.spreadsheets.values.update(request)).data;
 		message.channel.send(`Successfully updated setting to ${value} ${prideFlag}`);
-		setTimeout(function() { updatedSettings = updateSettings(auth); }, 1000);
+		const updatedSettings = await updateSettings(auth);
 		return updatedSettings;
 	} catch (err) {
 		message.channel.send(`Failed to update setting. ${prideFlag}`);
