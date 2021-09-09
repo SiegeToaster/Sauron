@@ -55,6 +55,7 @@ import updateSettings from "./src/functions/settings/updateSettings.js";
 import getOfflineMembers from './src/functions/getOfflineMembers.js';
 import getSheeshiusVerse from './src/functions/getSheeshiusVerse.js';
 
+//=====CLIENT=====\\
 client.once('ready', () => {
 	console.log('');
 	console.log('Sauron is now online.');
@@ -73,28 +74,28 @@ const prefix = process.env.prefix;
 const helpEmbed = new Discord.MessageEmbed()
 	.setColor('#0099ff')
 	.setTitle('Help')
-	.setAuthor('Sauron', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
-	.setDescription('A list of commands for the Sauron bot.')
+	.setAuthor('Saur\u00F6n', 'https://media.discordapp.net/attachments/831202194673107005/841810208833142844/evening_gentlemen.png')
+	.setDescription('A list \u00F6f c\u00F6mmands f\u00F6r the Saur\u00F6n b\u00F6t.')
 	.addFields(
 		{ name: '\u200B', value: '\u200B' },
-		{ name: 'Prefix', value: `Use this character at the beginning of any message that is a command\n${prefix}` },
-		{ name: 'Ping', value: "Sends 'pong' instantly.  Used to test bot's connection or if the bot is online." },
+		{ name: 'Prefix', value: `Use this character at the beginning \u00F6f any message that is a c\u00F6mmand\n${prefix}` },
+		{ name: 'Ping', value: "Sends 'p\u00F6ng' instantly.  Used t\u00F6 test b\u00F6t's c\u00F6nnecti\u00F6n \u00F6r if the b\u00F6t is \u00F6nline." },
 		{ name: 'Help', value: 'Sends this embed.' },
-		{ name: 'Catjam', value: 'Sends a gif of a cat jamming.' },
-		{ name: 'Ben10', value: 'Sends the text you put after the command and a picture of a guy with his hand out.' },
-		{ name: 'Delete', value: 'Sends a picture of Pepe holding a sign that says "Delete That!!"' },
-		{ name: 'Joe', value: 'mama' },
-		{ name: 'Absent', value: 'Checks is people are offline.  If people are pinged after command, it only checks those, otherwise, it checks everyone.' },
-		{ name: 'Troll', value: 'Sends the message declared after the command 25 times.' },
-		{ name: 'Gamble', value: 'Guessing game for numbers between 1 and 10.  OPTIONAL: Add a number after command to automatically get answer.' },
-		{ name: 'Coinflip', value: 'Flips a coin, lands on heads or tails.' },
-		{ name: 'Jamtime', value: 'Pings everyone asking for jamtime and adds yes/no reactions.\n\nIf someone reacts yes, they get present jammer <:FeelsOkayMan:785613008247193660>.\nIf someone reacts no, they get absent jammer <:Sadge:804521949794795601>.' },
-		{ name: 'Rate', value: 'Sets the score in the database.  After the command, a user must be mentioned followed by a number (the score).  Example:\n?rate `@Willius Dominus` 10' },
-		{ name: 'Getscore', value: 'Gets the score for everyone in the database.  Optional: add mention(s) after the command to get their score only.  Example:\n?getscore\n?getScore `@Willius Dominus` `@Bennamus Jullius`' },
-		{ name: 'Set', value: 'Changes settings.  After the command, a setting must be named followed by "true" or "false".  Valid settings are: "ping", "pride", "virgin", and "sus".  Example:\n?set ping true' },
-		{ name: 'sheeshius', value: 'get verse(s) from The Holy Book of Sheeshius.  Chapters, lines, both, or neither can be declared.  If none are declared, the entire book is sent.  If only a chapter or chapters are declared, it will send the entire chapters.  If both chapter and verse are declared (separated with ":") it will send the verses.  Multiple verses can be declared with a "-" and/or ",".' },
-		{ name: 'addPlaylist', value: 'Adds a song name, link, and optionally, an artist to the playlist.  Song name and artist must be in quotes.  Example:\n?addPlaylist "Puff the Magic Dragon" https://youtu.be/z15pxWUXvLY "Peter, Paul, and Mary"' },
-		{ name: 'getPlaylist', value: 'Gets a song from the playlist.  Song name or artist can be used as a filter.  Examples\n?getPlaylist Puff the Magic Dragon\n?getPlaylist Peter, Paul, and Mary\n?getPlaylist' },
+		{ name: 'Catjam', value: 'Sends a gif \u00F6f a cat jamming.' },
+		{ name: 'Ben10', value: 'Sends the text y\u00F6u put after the c\u00F6mmand and a picture \u00F6f a guy with his hand \u00F6ut.' },
+		{ name: 'Delete', value: 'Sends a picture \u00F6f Pepe h\u00F6lding a sign that says "Delete That!!"' },
+		{ name: 'J\u00F6e', value: 'mama' },
+		{ name: 'Absent', value: 'Checks is pe\u00F6ple are \u00F6ffline.  If pe\u00F6ple are pinged after c\u00F6mmand, it \u00F6nly checks th\u00F6se, \u00F6therwise, it checks every\u00F6ne.' },
+		{ name: 'Tr\u00F6ll', value: 'Sends the message declared after the c\u00F6mmand 25 times.' },
+		{ name: 'Gamble', value: 'Guessing game f\u00F6r numbers between 1 and 10.  \u00D6PTI\u00D6NAL: Add a number after c\u00F6mmand t\u00F6 aut\u00F6matically get answer.' },
+		{ name: 'C\u00F6inflip', value: 'Flips a c\u00F6in, lands \u00F6n heads \u00F6r tails.' },
+		{ name: 'Jamtime', value: 'Pings every\u00F6ne asking f\u00F6r jamtime and adds yes/n\u00F6 reacti\u00F6ns.\n\nIf s\u00F6me\u00F6ne reacts yes, they get present jammer <:FeelsOkayMan:785613008247193660>.\nIf s\u00F6me\u00F6ne reacts n\u00F6, they get absent jammer <:Sadge:804521949794795601>.' },
+		{ name: 'Rate', value: 'Sets the sc\u00F6re in the database.  After the c\u00F6mmand, a user must be menti\u00F6ned f\u00F6ll\u00F6wed by a number (the sc\u00F6re).  Example:\n?rate `@Willius Dominus` 10' },
+		{ name: 'Getsc\u00F6re', value: 'Gets the sc\u00F6re f\u00F6r every\u00F6ne in the database.  Opti\u00F6nal: add menti\u00F6n(s) after the c\u00F6mmand t\u00F6 get their sc\u00F6re \u00F6nly.  Example:\n?getscore\n?getScore `@Willius Dominus` `@Bennamus Jullius`' },
+		{ name: 'Set', value: 'Changes settings.  After the c\u00F6mmand, a setting must be named f\u00F6ll\u00F6wed by "true" \u00F6r "false".  Valid settings are: "ping", "pride", "virgin", and "sus".  Example:\n?set ping true' },
+		{ name: 'sheeshius', value: 'get verse(s) fr\u00F6m The H\u00F6ly B\u00F6\u00F6k \u00F6f Sheeshius.  Chapters, lines, b\u00F6th, \u00F6r neither can be declared.  If n\u00F6ne are declared, the entire b\u00F6\u00F6k is sent.  If \u00F6nly a chapter \u00F6r chapters are declared, it will send the entire chapters.  If b\u00F6th chapter and verse are declared (separated with ":") it will send the verses.  Multiple verses can be declared with a "-" and/\u00F6r ",".' },
+		{ name: 'addPlaylist', value: 'Adds a s\u00F6ng name, link, and \u00F6pti\u00F6nally, an artist t\u00F6 the playlist.  S\u00F6ng name and artist must be in qu\u00F6tes.  Example:\n?addPlaylist "Puff the Magic Drag\u00F6n" https://youtu.be/z15pxWUXvLY "Peter, Paul, and Mary"' },
+		{ name: 'getPlaylist', value: 'Gets a s\u00F6ng fr\u00F6m the playlist.  S\u00F6ng name \u00F6r artist can be used as a filter.  Examples\n?getPlaylist Puff the Magic Drag\u00F6n\n?getPlaylist Peter, Paul, and Mary\n?getPlaylist' },
 	)
 	.setFooter('ligma');
 let fullMessage = '';
