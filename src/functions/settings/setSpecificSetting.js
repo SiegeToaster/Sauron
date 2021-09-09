@@ -1,8 +1,8 @@
 import { google } from "googleapis";
-import { getSpecificSetting } from "./getSpecificSetting.js";
-import { updateSettings } from "./../settings/updateSettings.js";
+import getSpecificSetting from "./getSpecificSetting.js";
+import updateSettings from "./../settings/updateSettings.js";
 
-export async function setSpecificSetting(auth, range, value, message, prideFlag) {
+export default async function setSpecificSetting(auth, range, value, message, prideFlag) {
 	const sheets = google.sheets({ version: 'v4', auth });
 	const previousValue = await getSpecificSetting(auth, range);
 	if (!previousValue) return message.channel.send(`Failed to update setting. ${prideFlag}`);

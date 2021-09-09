@@ -1,10 +1,10 @@
 import Discord from 'discord.js';
 import { google } from "googleapis";
-import { countObject } from '../utility/countObject.js';
-import { getAuthorName } from '../utility/getAuthorName.js';
+import countObject from '../utility/countObject.js';
+import getAuthorName from '../utility/getAuthorName.js';
 
 
-export function getPlaylist(auth, message, filter) {
+export default function getPlaylist(auth, message, filter) {
 	if (!filter || filter.match(/[a|A][l|L]+/)) {
 		filter = 'all';
 	}

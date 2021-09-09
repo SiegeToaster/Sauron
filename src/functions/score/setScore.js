@@ -1,7 +1,7 @@
 import { google } from "googleapis";
-import { getSpecificScore } from "./getSpecificScore.js";
+import getSpecificScore from "./getSpecificScore.js";
 
-export async function setScore(auth, range, value, message, prideFlag) {
+export default async function setScore(auth, range, value, message, prideFlag) {
 	const previousValues = await getSpecificScore(auth, range);
 	if (!previousValues) return message.channel.send(`Failed to add score. ${prideFlag}`);
 	value = parseInt(value);

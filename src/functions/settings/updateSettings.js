@@ -1,6 +1,6 @@
-import { getSpecificSetting } from "./getSpecificSetting.js";
+import getSpecificSetting from "./getSpecificSetting.js";
 
-export async function updateSettings(auth) {
+export default async function updateSettings(auth) {
 	let { pingVar, prideVar, prideFlag, virginVar, susVar } = 'false';
 	pingVar = await getSpecificSetting(auth, 'Settings!A2');
 	prideVar = await getSpecificSetting(auth, 'Settings!B2');

@@ -1,7 +1,6 @@
-// import fs from 'fs';
 import { google } from "googleapis";
 
-export async function getSpecificSetting(auth, range) {
+export default async function getSpecificSetting(auth, range) {
 	return await new Promise((resolve) => {
 		const sheets = google.sheets({ version: 'v4', auth });
 		sheets.spreadsheets.values.get({

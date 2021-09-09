@@ -1,7 +1,7 @@
 import { google } from "googleapis";
-import { getAuthorName } from "./../utility/getAuthorName.js";
+import getAuthorName from "./../utility/getAuthorName.js";
 
-export function getIndividualScore(auth, id, message, prideFlag) {
+export default function getIndividualScore(auth, id, message, prideFlag) {
 	const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
 		spreadsheetId: process.env.SpreadsheetId,

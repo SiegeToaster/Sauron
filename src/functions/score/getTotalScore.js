@@ -1,6 +1,6 @@
 import { google } from "googleapis";
 
-export function getTotalScore(auth, message, prideFlag) {
+export default function getTotalScore(auth, message, prideFlag) {
 	const sheets = google.sheets({ version: 'v4', auth });
 	sheets.spreadsheets.values.get({
 		spreadsheetId: process.env.SpreadsheetId,

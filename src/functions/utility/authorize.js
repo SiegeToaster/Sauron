@@ -1,8 +1,8 @@
 import fs from 'fs';
 import { google } from "googleapis";
-import { getNewToken } from "./getNewToken.js";
+import getNewToken from "./getNewToken.js";
 
-export function authorize(credentials) {
+export default function authorize(credentials) {
 	const { client_secret, client_id, redirect_uris } = credentials.installed;
 	const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 	fs.readFile("token.json", (err, token) => {

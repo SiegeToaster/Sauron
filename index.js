@@ -39,21 +39,21 @@ let lastCorrectionIndex = 0;
 export let pingVar, prideVar, prideFlag, virginVar, susVar;
 
 //=====FUNCTIONS=====\\
-import { authorize } from "./src/functions/utility/authorize.js";
-import { getAuthorName } from "./src/functions/utility/getAuthorName.js";
+import authorize from "./src/functions/utility/authorize.js";
+import getAuthorName from "./src/functions/utility/getAuthorName.js";
 
-import { addToPlaylist } from "./src/functions/playlist/addToPlaylist.js";
-import { getPlaylist } from "./src/functions/playlist/getPlaylist.js";
+import addToPlaylist from "./src/functions/playlist/addToPlaylist.js";
+import getPlaylist from "./src/functions/playlist/getPlaylist.js";
 
-import { getIndividualScore } from "./src/functions/score/getIndividualScore.js";
-import { getTotalScore } from "./src/functions/score/getTotalScore.js";
-import { setScore } from "./src/functions/score/setScore.js";
+import getIndividualScore from "./src/functions/score/getIndividualScore.js";
+import getTotalScore from "./src/functions/score/getTotalScore.js";
+import setScore from "./src/functions/score/setScore.js";
 
-import { setSpecificSetting } from "./src/functions/settings/setSpecificSetting.js";
-import { updateSettings } from "./src/functions/settings/updateSettings.js";
+import setSpecificSetting from "./src/functions/settings/setSpecificSetting.js";
+import updateSettings from "./src/functions/settings/updateSettings.js";
 
-import { getOfflineMembers } from './src/functions/getOfflineMembers.js';
-import { getSheeshiusVerse } from './src/functions/getSheeshiusVerse.js';
+import getOfflineMembers from './src/functions/getOfflineMembers.js';
+import getSheeshiusVerse from './src/functions/getSheeshiusVerse.js';
 
 client.once('ready', () => {
 	console.log('');

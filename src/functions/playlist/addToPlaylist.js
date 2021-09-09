@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 const prideFlag = '';
 
-export async function addToPlaylist(auth, message, songArray) {
+export default async function addToPlaylist(auth, message, songArray) {
 	if (!songArray || songArray.length < 3) return message.channel.send('invalid song.');
 	const sheets = google.sheets({ version: 'v4', auth });
 	// console.log(songArray);

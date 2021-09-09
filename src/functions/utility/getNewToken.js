@@ -1,7 +1,7 @@
 import fs from 'fs';
 import readline from 'readline';
 
-export function getNewToken(oAuth2Client) {
+export default function getNewToken(oAuth2Client) {
 	const authUrl = oAuth2Client.generateAuthUrl({
 		access_type: 'offline',
 		scope: ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/documents'],

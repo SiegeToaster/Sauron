@@ -1,6 +1,6 @@
 import { google } from "googleapis";
 
-export async function getSpecificScore(auth, range) {
+export default async function getSpecificScore(auth, range) {
 	const promise = new Promise((resolve) => {
 		const sheets = google.sheets({ version: 'v4', auth });
 		sheets.spreadsheets.values.get({
