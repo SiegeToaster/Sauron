@@ -1,9 +1,7 @@
-/* eslint-disable no-prototype-builtins */
-
-export function countObject(object) {
+export function countObject(obj) {
 	let count = 0;
-	for (const prop in object) {
-		if (object.hasOwnProperty(prop)) count++;
+	for (const prop in obj) {
+		if (Object.prototype.hasOwnProperty.call(obj, prop)) count++;
 	}
 
 	return count;

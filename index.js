@@ -1,4 +1,3 @@
-/* eslint-disable no-prototype-builtins */
 // =====SETUP=====\\
 import Discord from 'discord.js';
 import fs from 'fs';
@@ -37,7 +36,7 @@ const correctionGifs = [
 let lastCorrectionIndex = 0;
 
 //=====SETTINGS=====\\
-let pingVar, prideVar, prideFlag, virginVar, susVar;
+export let pingVar, prideVar, prideFlag, virginVar, susVar;
 
 //=====FUNCTIONS=====\\
 import { authorize } from "./src/functions/utility/authorize.js";
@@ -102,8 +101,7 @@ let fullMessage = '';
 
 client.login(process.env.discord_token);
 //=====ACTIONS===== \\
-client.on ('message', message => { //! need to standardize parameters for files
-	// 								maybe (message, args, prideFlag, authCode, special)
+client.on ('message', message => {
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
 	if (message.content === 'https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg') {
@@ -129,7 +127,6 @@ client.on ('message', message => { //! need to standardize parameters for files
 		message.channel.send('Your message has been deleted for not having :rainbow_flag: at the end.  Happy Pride Month!\n:rainbow_flag:\n:rainbow_flag:\n:rainbow_flag:\n:rainbow_flag:\n🏳️‍🌈');
 	}
 	if (!message.content.startsWith(prefix) || message.content == prefix) return;
-	// const guild = client.guilds.cache.get('761347053983891496');
 	console.log(' ');
 	// =====DEBUG=====\\
 	// console.log(`command: ${command}`);
@@ -325,20 +322,7 @@ client.on ('message', message => { //! need to standardize parameters for files
 		} else {
 			message.mentions.members.array().forEach(element => {
 				console.log(element.id);
-				switch (element.id) {
-				case '356642729394044932':
-					element = 'A2:E2';
-					break;
-
-				case '306589457908498433':
-					element = 'A3:E3';
-					break;
-
-				case '495290130924437516':
-					element = 'A4:E4';
-					break;
-				}
-				getIndividualScore(authCode, element, message, prideFlag);
+				getIndividualScore(authCode, element.id, message, prideFlag);
 			});
 		}
 		break;
