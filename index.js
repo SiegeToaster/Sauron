@@ -38,6 +38,21 @@ let lastCorrectionIndex = 0;
 //=====SETTINGS=====\\
 export let pingVar, prideVar, prideFlag, virginVar, susVar;
 
+async function updateSettings(auth) {
+	pingVar = await getSpecificSetting(auth, 'Settings!A2');
+	prideVar = await getSpecificSetting(auth, 'Settings!B2');
+	if (prideVar === 'true') {
+		prideFlag = '🏳️‍🌈';
+	} else {
+		prideFlag = ' ';
+	}
+	virginVar = await getSpecificSetting(auth, 'Settings!C2');
+	susVar = await getSpecificSetting(auth, 'Settings!D2');
+
+	console.log('Settings Updated.');
+	return [pingVar, prideVar, prideFlag, virginVar, susVar];
+} // ToDo: remove returned array and just edit values directly from funciton.
+
 //=====FUNCTIONS=====\\
 import authorize from "./src/functions/utility/authorize.js";
 import getAuthorName from "./src/functions/utility/getAuthorName.js";
@@ -50,7 +65,7 @@ import getTotalScore from "./src/functions/score/getTotalScore.js";
 import setScore from "./src/functions/score/setScore.js";
 
 import setSpecificSetting from "./src/functions/settings/setSpecificSetting.js";
-import updateSettings from "./src/functions/settings/updateSettings.js";
+import getSpecificSetting from "./src/functions/settings/getSpecificSetting.js";
 
 import getOfflineMembers from './src/functions/getOfflineMembers.js';
 import getSheeshiusVerse from './src/functions/getSheeshiusVerse.js';
@@ -62,6 +77,7 @@ client.once('ready', () => {
 	client.user.setStatus("online");
 	(async () => {
 		const settingsArray = await updateSettings(authCode);
+		console.log(`Settings Array: ${settingsArray}`);
 		pingVar = settingsArray[0];
 		prideVar = settingsArray[1];
 		prideFlag = settingsArray[2];
