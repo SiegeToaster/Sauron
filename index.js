@@ -38,7 +38,7 @@ let lastCorrectionIndex = 0;
 //=====SETTINGS=====\\
 export let pingVar, prideVar, prideFlag, virginVar, susVar;
 
-async function updateSettings(auth) {
+export async function updateSettings(auth) {
 	pingVar = await getSpecificSetting(auth, 'Settings!A2');
 	prideVar = await getSpecificSetting(auth, 'Settings!B2');
 	if (prideVar === 'true') {
@@ -50,8 +50,7 @@ async function updateSettings(auth) {
 	susVar = await getSpecificSetting(auth, 'Settings!D2');
 
 	console.log('Settings Updated.');
-	return [pingVar, prideVar, prideFlag, virginVar, susVar];
-} // ToDo: remove returned array and just edit values directly from funciton.
+}
 
 //=====FUNCTIONS=====\\
 import authorize from "./src/functions/utility/authorize.js";
@@ -75,15 +74,7 @@ client.once('ready', () => {
 	console.log('');
 	console.log('Sauron is now online.');
 	client.user.setStatus("online");
-	(async () => {
-		const settingsArray = await updateSettings(authCode);
-		console.log(`Settings Array: ${settingsArray}`);
-		pingVar = settingsArray[0];
-		prideVar = settingsArray[1];
-		prideFlag = settingsArray[2];
-		virginVar = settingsArray[3];
-		susVar = settingsArray[4];
-	})();
+	updateSettings(authCode);
 });
 
 const prefix = process.env.prefix;
@@ -118,7 +109,7 @@ let fullMessage = '';
 
 client.login(process.env.discord_token);
 //=====ACTIONS===== \\
-client.on ('message', message => {
+client.on('message', message => {
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
 	if (message.content === 'https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg') {
@@ -362,14 +353,7 @@ client.on ('message', message => {
 			break;
 		}
 
-		(async () => {
-			const settingsArray = await setSpecificSetting(authCode, args[0], args[1], message, prideFlag);
-			pingVar = settingsArray[0];
-			prideVar = settingsArray[1];
-			prideFlag = settingsArray[2];
-			virginVar = settingsArray[3];
-			susVar = settingsArray[4];
-		})();
+		setSpecificSetting(authCode, args[0], args[1], message, prideFlag);
 		break;
 	}
 
