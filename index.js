@@ -113,7 +113,9 @@ let fullMessage = '';
 
 client.login(process.env.discord_token);
 //=====ACTIONS===== \\
+export let messageTest = {};
 client.on('message', message => {
+	messageTest = message;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
 	if (message.content === 'https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg') {
@@ -148,7 +150,7 @@ client.on('message', message => {
 	// console.log(`guild: ${guild}`);
 	console.log(`input: ${command} ${args}`);
 	console.log(`${command}`);
-	eval(`${command.split('?')}(${message})`);
+	eval(`${command.split('?')}()`);
 
 	switch (command) {
 	/* case 'ping': {
