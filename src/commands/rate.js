@@ -1,4 +1,4 @@
-import { setScore } from "../functions/score/setScore.js";
+import setScore from "../functions/score/setScore.js";
 
 export function rate(message, args, prideFlag, authCode) {
 	if (args[0] == `<@!${message.author.id}>`) return message.channel.send(`Invalid user - Rule 10 <:FeelsWeirdMan:792656734409195542> ${prideFlag}`);

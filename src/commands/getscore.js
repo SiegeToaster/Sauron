@@ -1,5 +1,5 @@
-import { getTotalScore } from "../functions/score/getTotalScore.js";
-import { getIndividualScore } from "../functions/score/getIndividualScore.js";
+import getTotalScore from "../functions/score/getTotalScore.js";
+import getIndividualScore from "../functions/score/getIndividualScore.js";
 
 export function getScore(message, args, prideFlag, authCode) { // ToDo: instead of checking against 3 specifics, get each id in the database and compare against.  Must use for loop for it to work (`A${i}:E${i}`)
 	if (message.mentions.members.array().length < 1) {

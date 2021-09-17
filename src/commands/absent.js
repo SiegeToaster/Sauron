@@ -1,4 +1,4 @@
-import { getOfflineMembers } from './../functions/getOfflineMembers';
+import getOfflineMembers from './../functions/getOfflineMembers.js';
 
 export function absent(message, args, prideFlag) {
 	let offlineMembers = getOfflineMembers(message.mentions.members.array(), message);

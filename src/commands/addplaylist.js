@@ -1,4 +1,4 @@
-import { addToPlaylist } from './../functions/playlist/addToPlaylist';
+import addToPlaylist from './../functions/playlist/addToPlaylist.js';
 
 export function addPlaylist(message, args, prideFlag, authCode) {
 	/*

@@ -1,4 +1,4 @@
-import { getAuthorName } from "../functions/utility/getAuthorName.js";
+import getAuthorName from "../functions/utility/getAuthorName.js";
 
 export function jamtime(message, args, prideFlag) {
 	// eslint-disable-next-line prefer-const

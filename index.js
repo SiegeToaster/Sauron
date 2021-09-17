@@ -69,6 +69,10 @@ import getSpecificSetting from "./src/functions/settings/getSpecificSetting.js";
 import getOfflineMembers from './src/functions/getOfflineMembers.js';
 import getSheeshiusVerse from './src/functions/getSheeshiusVerse.js';
 
+//=====COMMANDS=====\\
+
+import { ping } from './src/commands/allCommands.js';
+
 //=====CLIENT=====\\
 client.once('ready', () => {
 	console.log('');
@@ -143,12 +147,15 @@ client.on('message', message => {
 	// console.log(`args size: ${args.length}`);
 	// console.log(`guild: ${guild}`);
 	console.log(`input: ${command} ${args}`);
+	console.log(`${command}`);
+	eval(`${command.split('?')}(${message})`);
+
 	switch (command) {
-	case 'ping': {
+	/* case 'ping': {
 		message.channel.send(`Pong. ${prideFlag}`);
 		console.log('ping');
 		break;
-	}
+	} */
 
 	case 'help': {
 		message.channel.send(helpEmbed);
@@ -451,16 +458,16 @@ client.on('message', message => {
 
 	case 'getplaylist': {
 		/*
-				get a song from playlist
-					without anything after command, returns a random song name and link
-					with 'all' after command, returns all song names in playlist
-					with a song name after command, returns song name and link of song (if it exists in the playlist)
-					with an artist after command, returns all songs by artists (if it exists in the playlist)
-					examples:
-						?getplaylist all
-						?getplaylist Hey Ya!
-						?getplaylist Ramones
-			*/
+			get a song from playlist
+				without anything after command, returns a random song name and link
+				with 'all' after command, returns all song names in playlist
+				with a song name after command, returns song name and link of song (if it exists in the playlist)
+				with an artist after command, returns all songs by artists (if it exists in the playlist)
+				examples:
+					?getplaylist all
+					?getplaylist Hey Ya!
+					?getplaylist Ramones
+		*/
 		const filter = args.join(' ');
 		console.log(filter);
 		getPlaylist(authCode, message, filter);

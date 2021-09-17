@@ -1,4 +1,4 @@
-export function ping(message, args, prideFlag) {
-	message.channel.send(`Pong. ${prideFlag}`);
+export default function ping(message/*, args, prideFlag*/) {
+	message.channel.send(`Pong.`);
 	console.log('ping');
 }

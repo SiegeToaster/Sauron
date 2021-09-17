@@ -1,4 +1,4 @@
-import { setSpecificSetting } from "../functions/settings/setSpecificSetting.js";
+import setSpecificSetting from "../functions/settings/setSpecificSetting.js";
 
 export function set(message, args, prideFlag, authCode) { // same problem as help
 	if (args[0] !== 'ping' && args[0] !== 'pride' && args[0] !== 'virgin' && args[0] !== 'sus') return message.channel.send(`${args[0]} is not a setting. ${prideFlag}`);

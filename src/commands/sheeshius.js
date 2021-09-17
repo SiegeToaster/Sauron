@@ -1,4 +1,4 @@
-import { getSheeshiusVerse } from "../functions/getSheeshiusVerse.js";
+import getSheeshiusVerse from "../functions/getSheeshiusVerse.js";
 
 export function sheeshius(message, args, prideFlag, authCode) {
 	// console.log(args);
