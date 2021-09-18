@@ -1,5 +1,6 @@
 # Sauron
 crappy Discord bot
+Finished
 
 ## Info/Installation
 Requires a google sheets document and a google app that you are authorized to use.  The app must allow editing and reading your google sheets documents.  If you do not know how to set this up, read the [Google Sheets API Documentation for Node.js](https://developers.google.com/sheets/api/quickstart/nodejs).
