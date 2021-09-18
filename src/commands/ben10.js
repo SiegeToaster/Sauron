@@ -1,4 +1,4 @@
-export function ben10(message, args, prideFlag) {
+export default function ben10(message, args, prideFlag) {
 	message.delete();
 	let fullMessage = '';
 	if (args.length > 0) {

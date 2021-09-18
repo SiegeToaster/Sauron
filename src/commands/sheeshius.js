@@ -1,6 +1,6 @@
 import getSheeshiusVerse from "../functions/getSheeshiusVerse.js";
 
-export function sheeshius(message, args, prideFlag, authCode) {
+export default function sheeshius(message, args, prideFlag, authCode) {
 	// console.log(args);
 	let CurrentChapter = -1;
 	// eslint-disable-next-line prefer-const

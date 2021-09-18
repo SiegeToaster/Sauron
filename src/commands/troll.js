@@ -1,4 +1,4 @@
-export function troll(message, args, prideFlag) {
+export default function troll(message, args, prideFlag) {
 	message.delete();
 	if (args.length < 1) {
 		return message.channel.send(`No one to troll <:FeelsBadMan:794744572718481408> ${prideFlag}`);

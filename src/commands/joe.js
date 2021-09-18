@@ -1,3 +1,3 @@
-export function joe(message, args, prideFlag) {
+export default function joe(message, args, prideFlag) {
 	message.channel.send(`joe mama ${prideFlag}`);
 }

@@ -1,7 +1,4 @@
-import { messageTest } from '../../index.js';
-
-export default function ping(/*message, args, prideFlag*/) {
-	const message = messageTest;
-	message.channel.send(`Pong.`);
+export default function ping(message, args, prideFlag) {
+	message.channel.send(`Pong.${prideFlag}`);
 	console.log('ping');
 }

@@ -1,6 +1,6 @@
 import setSpecificSetting from "../functions/settings/setSpecificSetting.js";
 
-export function set(message, args, prideFlag, authCode) { // same problem as help
+export default function set(message, args, prideFlag, authCode) { // same problem as help
 	if (args[0] !== 'ping' && args[0] !== 'pride' && args[0] !== 'virgin' && args[0] !== 'sus') return message.channel.send(`${args[0]} is not a setting. ${prideFlag}`);
 	if (args[1] !== 'true' && args[1] !== 'false') return message.channel.send(`${args[1]} is an invalid setting for ${args[0]} ${prideFlag}`);
 	switch (args[0]) {
@@ -17,12 +17,5 @@ export function set(message, args, prideFlag, authCode) { // same problem as hel
 		break;
 	}
 
-	(async () => {
-		const settingsArray = await setSpecificSetting(authCode, args[0], args[1], message, prideFlag);
-		pingVar = settingsArray[0];
-		prideVar = settingsArray[1];
-		prideFlag = settingsArray[2];
-		virginVar = settingsArray[3];
-		susVar = settingsArray[4];
-	})();
+	setSpecificSetting(authCode, args[0], args[1], message, prideFlag);
 }

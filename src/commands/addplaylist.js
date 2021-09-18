@@ -1,6 +1,6 @@
 import addToPlaylist from './../functions/playlist/addToPlaylist.js';
 
-export function addPlaylist(message, args, prideFlag, authCode) {
+export default function addPlaylist(message, args, prideFlag, authCode) {
 	/*
 		adds a song to the database.  After the command, a song name and a link must be added.  Optionally, the artist name can be added Examples:
 			?addplaylist Hey Ya! https://www.youtube.com/watch?v=PWgvGjAhvIw

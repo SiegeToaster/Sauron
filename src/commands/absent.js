@@ -1,6 +1,6 @@
 import getOfflineMembers from './../functions/getOfflineMembers.js';
 
-export function absent(message, args, prideFlag) {
+export default function absent(message, args, prideFlag) {
 	let offlineMembers = getOfflineMembers(message.mentions.members.array(), message);
 	if (offlineMembers.length < 1) {
 		message.channel.send(`No one is absent <:FeelsOkayMan:785613008247193660> ${prideFlag}`);

@@ -1,8 +1,8 @@
 import getAuthorName from "../functions/utility/getAuthorName.js";
 
-export function jamtime(message, args, prideFlag) {
+export default function jamtime(message, args, prideFlag) {
 	// eslint-disable-next-line prefer-const
-	let reactedUsers = [];
+	let reactedUsers = [''];
 	message.channel.send(`@everyone jam time?  <:FeelsOkayMan:785613008247193660> ${prideFlag}`).then(sent => {
 		sent.react('✅')
 			.then(() => {

@@ -26,8 +26,6 @@ On the first launch, make sure to use a terminal that you can input data into as
     - sends a catjam gif.
 - [x] ben10
     - sends the text put after the command and this image: https://media.discordapp.net/attachments/831202194673107005/844378006147694622/Thats_far_enough.PNG
-- [x] delete
-    - Sends a picture of Pepe holding a sign that say "Delete That!!" (https://media.discordapp.net/attachments/761347053983891499/842548851310985236/delete.jpg).  Coincidentally, anyone sending that image makes the bot delete the message directly above it.
 - [x] joe
     - messages back 'joe mama'.
 - [x] absent

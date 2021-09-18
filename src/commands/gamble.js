@@ -1,4 +1,4 @@
-export function gamble(message, args, prideFlag, authCode, client) {
+export default function gamble(message, args, prideFlag, authCode, client) {
 	const gambleNumber = Math.round(Math.random() * 10);
 	if (args[0]) args[0] = parseInt(args[0]);
 	if (args[0] > -1 && args[0] < 11) {

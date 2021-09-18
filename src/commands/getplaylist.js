@@ -1,4 +1,4 @@
-export function getPlaylist(message, args, prideFlag, authCode) {
+export default function getPlaylist(message, args, prideFlag, authCode) {
 	/*
 			get a song from playlist
 				without anything after command, returns a random song name and link

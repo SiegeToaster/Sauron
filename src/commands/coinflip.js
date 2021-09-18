@@ -1,4 +1,4 @@
-export function coinflip(message, args, prideFlag) {
+export default function coinflip(message, args, prideFlag) {
 	const flipNumber = Math.round(Math.random());
 	console.log(flipNumber);
 	if (flipNumber === 1) {
