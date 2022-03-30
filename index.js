@@ -82,11 +82,13 @@ function help(message) {
 // imported commands are called by a string inputted by the user, cannot really use it since the first place it would be read is from a user-inputted string
 // eslint-disable-next-line no-unused-vars
 import { absent, addplaylist, ben10, catjam, coinflip, forgot, gamble, getplaylist, getscore, jamtime, joe, ping, rate, set, sheeshius, test, troll } from './src/commands/allCommands.js';
+import messageChecker from './src/messageChecker.js';
 
 //=====ACTIONS===== \\
 client.on('message', message => {
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const command = args.shift().toLowerCase();
+	if (!message.author.bot) messageChecker(message, prideFlag, susVar, pingVar, virginVar, prideVar);
 	if (!message.content.startsWith(prefix) || message.content == prefix || !allCommands.includes(command)) return;
 	console.log(' ');
 	console.log(`input: ${command} ${args}`);
